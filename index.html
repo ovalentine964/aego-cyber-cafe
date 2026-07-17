@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nyatike Cyber Cafe | Digital Services in Migori County, Kenya</title>
+    <meta name="description" content="Nyatike Cyber Cafe offers printing, government services (KRA, eCitizen), CV writing, passport photos & more in Nyatike, Migori County. Open daily.">
+    <meta name="keywords" content="cyber cafe Nyatike, KRA services Nyatike, eCitizen services, printing Nyatike, CV writing Migori, passport photos Nyatike">
+    <meta name="author" content="Nyatike Cyber Cafe">
+    <meta property="og:title" content="Nyatike Cyber Cafe | Your Digital Hub in Migori County">
+    <meta property="og:description" content="Printing, government services & more. Located in Nyatike, Migori County.">
+    <meta property="og:type" content="website">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://nyatikecybercafe.co.ke/">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💻</text></svg>">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1e40af',
+                        accent: '#f97316',
+                        kenya: { red: '#bb0000', green: '#006600', black: '#000000' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .hero-gradient { background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 50%, #0f172a 100%); }
+        .card-hover { transition: transform 0.2s, box-shadow 0.2s; }
+        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.15); }
+        .whatsapp-pulse { animation: pulse 2s infinite; }
+        @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.1)} }
+        .kenya-stripe { background: linear-gradient(to right, #000 25%, #bb0000 25%, #bb0000 50%, #006600 50%, #006600 75%, #000 75%); height: 4px; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+<!-- Kenya Stripe Top -->
+<div class="kenya-stripe"></div>
+
+<!-- Navigation -->
+<nav class="bg-white shadow-lg sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+        <a href="index.html" class="flex items-center gap-2">
+            <span class="text-2xl">💻</span>
+            <span class="text-xl font-bold text-primary">Nyatike Cyber</span>
+        </a>
+        <!-- Mobile menu button -->
+        <button id="menuBtn" class="md:hidden text-2xl" aria-label="Toggle menu" onclick="document.getElementById('mobileMenu').classList.toggle('hidden')">☰</button>
+        <!-- Desktop menu -->
+        <div class="hidden md:flex items-center gap-6">
+            <a href="index.html" class="text-primary font-semibold border-b-2 border-accent">Home</a>
+            <a href="services.html" class="text-gray-600 hover:text-primary">Services</a>
+            <a href="about.html" class="text-gray-600 hover:text-primary">About</a>
+            <a href="contact.html" class="text-gray-600 hover:text-primary">Contact</a>
+            <!-- TODO: Replace 25470115 965 49378 with actual WhatsApp number -->
+            <a href="https://wa.me/25470115 965 49378?text=Hello%20Nyatike%20Cyber%20Cafe!%20I%20need%20help%20with%20a%20service." target="_blank" class="bg-accent text-white px-4 py-2 rounded-lg font-semibold hover:bg-orange-600 transition">📱 WhatsApp Us</a>
+        </div>
+    </div>
+    <!-- Mobile menu -->
+    <div id="mobileMenu" class="hidden md:hidden bg-white border-t">
+        <a href="index.html" class="block px-4 py-3 text-primary font-semibold">Home</a>
+        <a href="services.html" class="block px-4 py-3 text-gray-600 hover:bg-gray-50">Services</a>
+        <a href="about.html" class="block px-4 py-3 text-gray-600 hover:bg-gray-50">About</a>
+        <a href="contact.html" class="block px-4 py-3 text-gray-600 hover:bg-gray-50">Contact</a>
+        <a href="https://wa.me/25470115 965 49378?text=Hello%20Nyatike%20Cyber%20Cafe!" target="_blank" class="block px-4 py-3 text-accent font-semibold">📱 WhatsApp Us</a>
+    </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="hero-gradient text-white py-16 md:py-24 px-4">
+    <div class="max-w-7xl mx-auto text-center">
+        <h1 class="text-3xl md:text-5xl font-bold mb-4">Welcome to <span class="text-accent">Nyatike Cyber Cafe</span></h1>
+        <p class="text-lg md:text-xl text-blue-200 mb-2">Your One-Stop Digital Hub in Nyatike, Migori County</p>
+        <p class="text-blue-300 mb-8">🇰🇪 Serving the community with affordable digital services since day one</p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="services.html" class="bg-accent text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-orange-600 transition">View Our Services</a>
+            <a href="https://wa.me/25470115 965 49378?text=Hello!%20I%20would%20like%20to%20inquire%20about%20your%20services." target="_blank" class="border-2 border-white text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-white hover:text-primary transition">💬 Chat on WhatsApp</a>
+        </div>
+    </div>
+</section>
+
+<!-- Quick Info Bar -->
+<div class="bg-primary text-white py-3">
+    <div class="max-w-7xl mx-auto px-4 flex flex-wrap justify-center gap-6 text-sm">
+        <span>📍 Nyatike Town, Migori County</span>
+        <span>🕐 Mon-Sat: 7AM - 8PM | Sun: 9AM - 5PM</span>
+        <span>📱 0115 965 493</span>
+    </div>
+</div>
+
+<!-- Services Overview -->
+<section class="py-16 px-4">
+    <div class="max-w-7xl mx-auto">
+        <h2 class="text-3xl font-bold text-center mb-2 text-primary">Our Services</h2>
+        <p class="text-center text-gray-500 mb-12">Everything digital, right here in Nyatike</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <a href="services.html#government" class="card-hover bg-white rounded-xl p-6 shadow-md text-center border-t-4 border-primary">
+                <span class="text-4xl">🏛️</span>
+                <h3 class="font-bold mt-3 mb-1">Government Services</h3>
+                <p class="text-sm text-gray-500">KRA, eCitizen, NSSF, NHIF</p>
+            </a>
+            <a href="services.html#printing" class="card-hover bg-white rounded-xl p-6 shadow-md text-center border-t-4 border-accent">
+                <span class="text-4xl">🖨️</span>
+                <h3 class="font-bold mt-3 mb-1">Printing & Copying</h3>
+                <p class="text-sm text-gray-500">Print, photocopy, scan</p>
+            </a>
+            <a href="services.html#writing" class="card-hover bg-white rounded-xl p-6 shadow-md text-center border-t-4 border-primary">
+                <span class="text-4xl">📝</span>
+                <h3 class="font-bold mt-3 mb-1">CV & Applications</h3>
+                <p class="text-sm text-gray-500">CVs, cover letters, job apps</p>
+            </a>
+            <a href="services.html#photos" class="card-hover bg-white rounded-xl p-6 shadow-md text-center border-t-4 border-accent">
+                <span class="text-4xl">📸</span>
+                <h3 class="font-bold mt-3 mb-1">Passport Photos</h3>
+                <p class="text-sm text-gray-500">Instant passport photos</p>
+            </a>
+
+            <a href="services.html#repair" class="card-hover bg-white rounded-xl p-6 shadow-md text-center border-t-4 border-accent">
+                <span class="text-4xl">🔧</span>
+                <h3 class="font-bold mt-3 mb-1">Device Repair</h3>
+                <p class="text-sm text-gray-500">Phone & computer repair</p>
+            </a>
+            <a href="services.html#data" class="card-hover bg-white rounded-xl p-6 shadow-md text-center border-t-4 border-primary">
+                <span class="text-4xl">📦</span>
+                <h3 class="font-bold mt-3 mb-1">Data Bundles</h3>
+                <p class="text-sm text-gray-500">Safaricom, Airtel, Telkom</p>
+            </a>
+            <a href="services.html#applications" class="card-hover bg-white rounded-xl p-6 shadow-md text-center border-t-4 border-accent">
+                <span class="text-4xl">🎓</span>
+                <h3 class="font-bold mt-3 mb-1">Online Applications</h3>
+                <p class="text-sm text-gray-500">Jobs, schools, visas</p>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Why Choose Us -->
+<section class="bg-gray-100 py-16 px-4">
+    <div class="max-w-7xl mx-auto">
+        <h2 class="text-3xl font-bold text-center mb-12 text-primary">Why Choose Us?</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="text-center">
+                <span class="text-5xl">💰</span>
+                <h3 class="font-bold text-xl mt-4 mb-2">Affordable Prices</h3>
+                <p class="text-gray-600">Best rates in Nyatike. We keep our prices pocket-friendly for everyone.</p>
+            </div>
+            <div class="text-center">
+                <span class="text-5xl">⚡</span>
+                <h3 class="font-bold text-xl mt-4 mb-2">Fast & Reliable</h3>
+                <p class="text-gray-600">Quick turnaround on all services. We get it done right, the first time.</p>
+            </div>
+            <div class="text-center">
+                <span class="text-5xl">🤝</span>
+                <h3 class="font-bold text-xl mt-4 mb-2">Friendly Support</h3>
+                <p class="text-gray-600">Our staff is always ready to help. We treat every customer like family.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- M-Pesa Payment Info -->
+<section class="py-16 px-4">
+    <div class="max-w-4xl mx-auto bg-green-50 border-2 border-green-200 rounded-2xl p-8 text-center">
+        <span class="text-5xl">💳</span>
+        <h2 class="text-2xl font-bold mt-4 mb-2 text-green-800">We Accept M-Pesa!</h2>
+        <p class="text-gray-600 mb-4">Pay easily using Lipa Na M-Pesa</p>
+        <div class="bg-white rounded-lg p-4 inline-block shadow-sm">
+            <p class="text-sm text-gray-500">Paybill Number</p>
+            <p class="text-3xl font-bold text-green-700">0115 965 493</p>
+            <p class="text-sm text-gray-500 mt-2">Account: Your Name</p>
+        </div>
+        <p class="text-sm text-gray-500 mt-4">Also accepting cash payments</p>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="hero-gradient text-white py-12 px-4">
+    <div class="max-w-4xl mx-auto text-center">
+        <h2 class="text-2xl md:text-3xl font-bold mb-4">Ready to Get Started?</h2>
+        <p class="text-blue-200 mb-6">Visit us today or send us a WhatsApp message!</p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="contact.html" class="bg-accent text-white px-8 py-3 rounded-lg font-bold hover:bg-orange-600 transition">📍 Get Directions</a>
+            <a href="tel:+25470115 965 49378" class="border-2 border-white text-white px-8 py-3 rounded-lg font-bold hover:bg-white hover:text-primary transition">📞 Call Now</a>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-gray-900 text-gray-400 py-12 px-4">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div>
+            <h3 class="text-white font-bold text-lg mb-3">💻 Nyatike Cyber Cafe</h3>
+            <p class="text-sm">Your trusted digital services partner in Nyatike, Migori County, Kenya.</p>
+        </div>
+        <div>
+            <h3 class="text-white font-bold mb-3">Quick Links</h3>
+            <ul class="space-y-2 text-sm">
+                <li><a href="services.html" class="hover:text-white">Services</a></li>
+                <li><a href="about.html" class="hover:text-white">About Us</a></li>
+                <li><a href="contact.html" class="hover:text-white">Contact</a></li>
+            </ul>
+        </div>
+        <div>
+            <h3 class="text-white font-bold mb-3">Connect With Us</h3>
+            <div class="flex gap-4 text-2xl">
+                <a href="https://wa.me/25470115 965 49378" target="_blank" title="WhatsApp">💬</a>
+                <!-- TODO: Replace # with actual social media profile URLs -->
+                <a href="#" target="_blank" title="Facebook">📘</a>
+                <a href="#" target="_blank" title="Twitter/X">🐦</a>
+                <a href="#" target="_blank" title="Instagram">📷</a>
+                <a href="#" target="_blank" title="TikTok">🎵</a>
+            </div>
+        </div>
+    </div>
+    <div class="kenya-stripe mt-8 mb-4"></div>
+    <p class="text-center text-sm">© 2026 Nyatike Cyber Cafe. All rights reserved. 🇰🇪</p>
+</footer>
+
+<!-- Floating WhatsApp Button -->
+<a href="https://wa.me/25470115 965 49378?text=Hello%20Nyatike%20Cyber%20Cafe!%20I%20need%20help%20with%20a%20service." target="_blank" class="fixed bottom-6 right-6 z-50 bg-green-500 text-white w-16 h-16 rounded-full flex items-center justify-center shadow-2xl whatsapp-pulse text-3xl hover:bg-green-600" title="Chat on WhatsApp">
+    💬
+</a>
+
+</body>
+</html>
