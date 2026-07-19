@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Online — Aego Cyber Cafe | Pay via M-Pesa</title>
+  <meta name="description" content="Order any service from Aego Cyber Cafe online. CV writing, KRA filing, business plans — pay via M-Pesa, get served from anywhere.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="container">
+    <a href="index.html" class="logo"><span class="logo-icon">⚡</span> Aego Cyber Cafe</a>
+    <button class="nav-toggle" onclick="toggleNav()" aria-label="Menu"><span></span><span></span><span></span></button>
+    <nav class="nav" id="mainNav">
+      <a href="index.html">Home</a>
+      <a href="services.html">Services</a>
+      <a href="diaspora.html">Diaspora</a>
+      <a href="about.html">About</a>
+      <a href="blog.html">Tips</a>
+      <a href="contact.html">Contact</a>
+      <a href="order.html" class="cta-nav">Order Now</a>
+    </nav>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <h1>📋 Order a Service</h1>
+    <p class="subtitle">Fill the form below, pay via M-Pesa, and we'll get to work. Simple, fast, reliable.</p>
+  </div>
+</section>
+
+<!-- ORDER STEPS -->
+<section class="section">
+  <div class="container">
+    <div class="order-steps">
+      <div class="order-step active" id="step1indicator">
+        <span class="num">1</span> Choose Service
+      </div>
+      <div class="order-step" id="step2indicator">
+        <span class="num">2</span> Your Details
+      </div>
+      <div class="order-step" id="step3indicator">
+        <span class="num">3</span> Payment
+      </div>
+    </div>
+
+    <!-- STEP 1: Service Selection -->
+    <div id="step1" class="form-step">
+      <h2 class="text-center">What service do you need?</h2>
+      <div class="form-group">
+        <label for="serviceCategory">Service Category</label>
+        <select class="form-control" id="serviceCategory" onchange="updateServices()">
+          <option value="">— Select a category —</option>
+          <option value="government">🏛️ Government Services (KRA, eCitizen, NHIF...)</option>
+          <option value="cv">📝 CV & Document Writing</option>
+          <option value="printing">🖨️ Printing & Copying</option>
+          <option value="design">🎨 Design Services</option>
+          <option value="student">🎓 Student Services</option>
+          <option value="business">💼 Business Services</option>
+          <option value="other">📌 Other (describe below)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="serviceType">Specific Service</label>
+        <select class="form-control" id="serviceType">
+          <option value="">— Select category first —</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="serviceDetails">Additional Details (optional)</label>
+        <textarea class="form-control" id="serviceDetails" rows="3" placeholder="Tell us more about what you need. E.g., 'I need a CV for a teaching position' or 'File my 2025 KRA returns'"></textarea>
+      </div>
+      <div class="text-center">
+        <button class="btn btn-primary" onclick="goToStep(2)">Continue to Details →</button>
+      </div>
+    </div>
+
+    <!-- STEP 2: Customer Details -->
+    <div id="step2" class="form-step" style="display:none;">
+      <h2 class="text-center">Your Details</h2>
+
+      <div class="form-group">
+        <label for="fullName">Full Name *</label>
+        <input type="text" class="form-control" id="fullName" placeholder="e.g. John Kamau" required>
+      </div>
+
+      <div class="form-group">
+        <label for="phone">Phone Number (M-Pesa number) *</label>
+        <input type="tel" class="form-control" id="phone" placeholder="e.g. 0712 345 678" required>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email (for document delivery)</label>
+        <input type="email" class="form-control" id="email" placeholder="e.g. john@gmail.com">
+      </div>
+
+      <div class="form-group">
+        <label for="whatsapp">WhatsApp Number *</label>
+        <input type="tel" class="form-control" id="whatsapp" placeholder="e.g. 0712 345 678 (we'll update you here)">
+      </div>
+
+      <div class="form-group">
+        <label for="location">Your Location</label>
+        <input type="text" class="form-control" id="location" placeholder="e.g. Nyatike, Nairobi, London...">
+      </div>
+
+      <!-- Dynamic fields based on service -->
+      <div id="dynamicFields"></div>
+
+      <div class="form-group">
+        <label for="fileUpload">Upload Documents (if needed)</label>
+        <input type="file" class="form-control" id="fileUpload" multiple style="padding:0.5rem;">
+        <small style="color:var(--gray);">Upload photos, documents, or files we need. Max 10MB.</small>
+      </div>
+
+      <div style="display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap;">
+        <button class="btn btn-secondary" onclick="goToStep(1)">← Back</button>
+        <button class="btn btn-primary" onclick="goToStep(3)">Continue to Payment →</button>
+      </div>
+    </div>
+
+    <!-- STEP 3: Payment -->
+    <div id="step3" class="form-step" style="display:none;">
+      <h2 class="text-center">Payment</h2>
+
+      <div class="payment-box">
+        <div class="mpesa-logo">M-PESA</div>
+        <p>Send payment to:</p>
+        <div class="paybill">Paybill: 0115 965 493</div>
+        <p style="font-size:0.9rem;color:var(--gray);">Account: Your phone number</p>
+        <p style="font-size:0.85rem;margin-top:0.75rem;"><strong>Steps:</strong><br>
+        1. Go to M-Pesa → Lipa na M-Pesa → Pay Bill<br>
+        2. Business No: <strong>0115 965 493</strong><br>
+        3. Account: <strong>Your phone number</strong><br>
+        4. Enter amount<br>
+        5. Confirm and send</p>
+      </div>
+
+      <div class="form-group">
+        <label for="mpesaCode">M-Pesa Transaction Code *</label>
+        <input type="text" class="form-control" id="mpesaCode" placeholder="e.g. QHK4B7XYZ" required>
+        <small style="color:var(--gray);">Enter the confirmation code from your M-Pesa message.</small>
+      </div>
+
+      <div class="form-group">
+        <label for="amountPaid">Amount Paid (KSh) *</label>
+        <input type="number" class="form-control" id="amountPaid" placeholder="e.g. 500" required>
+      </div>
+
+      <div style="display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap;">
+        <button class="btn btn-secondary" onclick="goToStep(2)">← Back</button>
+        <button class="btn btn-primary btn-block" style="max-width:300px;" onclick="submitOrder()">✅ Submit Order</button>
+      </div>
+    </div>
+
+    <!-- SUCCESS -->
+    <div id="successMessage" class="form-success">
+      <h2 style="color:#155724;">✅ Order Submitted Successfully!</h2>
+      <p>Thank you! We've received your order and payment details.</p>
+      <p><strong>What happens next:</strong></p>
+      <p>1. We'll verify your M-Pesa payment<br>
+      2. We'll start working on your service<br>
+      3. We'll WhatsApp you when it's ready</p>
+      <p style="margin-top:1rem;">
+        <a href="https://wa.me/254700000000?text=Hi!%20I%20just%20submitted%20an%20order%20on%20your%20website." class="btn btn-green">💬 Confirm on WhatsApp</a>
+      </p>
+    </div>
+
+  </div>
+</section>
+
+<!-- TRUST SIGNALS -->
+<section class="section section-alt">
+  <div class="container text-center">
+    <h2>🔒 Your Order is Safe With Us</h2>
+    <div class="why-grid" style="max-width:800px;margin:1rem auto 0;">
+      <div class="why-item">
+        <div class="why-icon">✅</div>
+        <div>
+          <h3>Verified Business</h3>
+          <p>Real business, real location, real people. Visit us in Nyatike.</p>
+        </div>
+      </div>
+      <div class="why-item">
+        <div class="why-icon">🎓</div>
+        <div>
+          <h3>Qualified Team</h3>
+          <p>Economics & Statistics graduate. We know what we're doing.</p>
+        </div>
+      </div>
+      <div class="why-item">
+        <div class="why-icon">⚡</div>
+        <div>
+          <h3>Fast Delivery</h3>
+          <p>Most orders completed same day. We WhatsApp you updates.</p>
+        </div>
+      </div>
+      <div class="why-item">
+        <div class="why-icon">💰</div>
+        <div>
+          <h3>Secure Payment</h3>
+          <p>M-Pesa is traceable and safe. You get a confirmation message.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <h4>Aego Cyber Cafe</h4>
+        <p style="font-size:0.9rem;">AI-powered digital services in Nyatike, Migori County.</p>
+      </div>
+      <div>
+        <h4>Services</h4>
+        <a href="services.html">All Services</a>
+        <a href="services.html#government">Government</a>
+        <a href="services.html#documents">Documents</a>
+      </div>
+      <div>
+        <h4>Quick Links</h4>
+        <a href="diaspora.html">Diaspora Services</a>
+        <a href="blog.html">Tips & Guides</a>
+        <a href="about.html">About Us</a>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <a href="https://wa.me/254700000000">📱 WhatsApp Us</a>
+        <p style="font-size:0.85rem;margin-top:0.5rem;">M-Pesa Paybill: <strong>0115 965 493</strong></p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Aego Cyber Cafe, Nyatike, Migori County. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+<a href="https://wa.me/254700000000?text=Hello%20Aego%20Cyber%20Cafe!" class="whatsapp-float" aria-label="Chat on WhatsApp">💬</a>
+<script src="app.js"></script>
+</body>
+</html>

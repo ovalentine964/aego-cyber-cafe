@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Us — Aego Cyber Cafe | Nyatike, Migori County</title>
+  <meta name="description" content="Contact Aego Cyber Cafe in Nyatike, Migori County. WhatsApp, phone, or visit us. M-Pesa Paybill: 0115 965 493.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="container">
+    <a href="index.html" class="logo"><span class="logo-icon">⚡</span> Aego Cyber Cafe</a>
+    <button class="nav-toggle" onclick="toggleNav()" aria-label="Menu"><span></span><span></span><span></span></button>
+    <nav class="nav" id="mainNav">
+      <a href="index.html">Home</a>
+      <a href="services.html">Services</a>
+      <a href="diaspora.html">Diaspora</a>
+      <a href="about.html">About</a>
+      <a href="blog.html">Tips</a>
+      <a href="contact.html">Contact</a>
+      <a href="order.html" class="cta-nav">Order Now</a>
+    </nav>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <h1>📍 Contact Us</h1>
+    <p class="subtitle">We're here to help. Reach out via WhatsApp, phone, or visit us in Nyatike.</p>
+  </div>
+</section>
+
+<!-- CONTACT OPTIONS -->
+<section class="section">
+  <div class="container">
+    <div class="contact-grid">
+      <a href="https://wa.me/254700000000?text=Hello%20Aego%20Cyber%20Cafe!" class="contact-card" style="text-decoration:none;">
+        <div class="contact-icon" style="background:#25D366;">💬</div>
+        <div>
+          <h3 style="margin-bottom:0.2rem;">WhatsApp (Preferred)</h3>
+          <p style="margin:0;color:var(--gray);">+254 700 000 000</p>
+          <p style="margin:0;font-size:0.85rem;color:var(--gray);">Fast response. Send us a message anytime.</p>
+        </div>
+      </a>
+
+      <a href="tel:+254700000000" class="contact-card" style="text-decoration:none;">
+        <div class="contact-icon">📞</div>
+        <div>
+          <h3 style="margin-bottom:0.2rem;">Phone</h3>
+          <p style="margin:0;color:var(--gray);">+254 700 000 000</p>
+          <p style="margin:0;font-size:0.85rem;color:var(--gray);">Call during business hours.</p>
+        </div>
+      </a>
+
+      <div class="contact-card">
+        <div class="contact-icon">📍</div>
+        <div>
+          <h3 style="margin-bottom:0.2rem;">Location</h3>
+          <p style="margin:0;color:var(--gray);">Nyatike Town, Migori County</p>
+          <p style="margin:0;font-size:0.85rem;color:var(--gray);">Near [landmark], Nyatike</p>
+        </div>
+      </div>
+
+      <div class="contact-card">
+        <div class="contact-icon">🕐</div>
+        <div>
+          <h3 style="margin-bottom:0.2rem;">Business Hours</h3>
+          <p style="margin:0;color:var(--gray);font-size:0.9rem;">Mon – Sat: 8:00 AM – 6:00 PM</p>
+          <p style="margin:0;color:var(--gray);font-size:0.9rem;">Sunday: 9:00 AM – 1:00 PM</p>
+        </div>
+      </div>
+
+      <div class="contact-card">
+        <div class="contact-icon" style="background:var(--green);">💰</div>
+        <div>
+          <h3 style="margin-bottom:0.2rem;">M-Pesa Paybill</h3>
+          <p style="margin:0;font-size:1.1rem;font-weight:700;color:var(--primary);">0115 965 493</p>
+          <p style="margin:0;font-size:0.85rem;color:var(--gray);">Account: Your phone number</p>
+        </div>
+      </div>
+
+      <div class="contact-card">
+        <div class="contact-icon">📧</div>
+        <div>
+          <h3 style="margin-bottom:0.2rem;">Email</h3>
+          <p style="margin:0;color:var(--gray);">info@aegocybercafe.co.ke</p>
+          <p style="margin:0;font-size:0.85rem;color:var(--gray);">For business inquiries.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MAP -->
+<section class="section section-alt">
+  <div class="container">
+    <h2 class="text-center">Find Us</h2>
+    <div class="map-container">
+      <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15955.2!2d34.2!3d-1.1!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMcKwMDYnMDAuMCJTIDM0wrAxMicwMC4wIkU!5e0!3m2!1sen!2ske!4v1" allowfullscreen loading="lazy" title="Aego Cyber Cafe Location"></iframe>
+    </div>
+    <p class="text-center" style="color:var(--gray);font-size:0.9rem;">📍 Nyatike Town, Migori County, Kenya</p>
+  </div>
+</section>
+
+<!-- CONTACT FORM -->
+<section class="section">
+  <div class="container" style="max-width:600px;">
+    <h2 class="text-center">Send Us a Message</h2>
+    <p class="text-center" style="color:var(--gray);margin-bottom:1.5rem;">Prefer a form? Fill it out and we'll get back to you.</p>
+
+    <form id="contactForm" onsubmit="submitContact(event)">
+      <div class="form-group">
+        <label for="contactName">Your Name *</label>
+        <input type="text" class="form-control" id="contactName" placeholder="e.g. John Kamau" required>
+      </div>
+      <div class="form-group">
+        <label for="contactPhone">Phone Number *</label>
+        <input type="tel" class="form-control" id="contactPhone" placeholder="e.g. 0712 345 678" required>
+      </div>
+      <div class="form-group">
+        <label for="contactEmail">Email</label>
+        <input type="email" class="form-control" id="contactEmail" placeholder="e.g. john@gmail.com">
+      </div>
+      <div class="form-group">
+        <label for="contactSubject">Subject</label>
+        <select class="form-control" id="contactSubject">
+          <option value="">Select a topic</option>
+          <option value="service">Service Inquiry</option>
+          <option value="pricing">Pricing Question</option>
+          <option value="order">Order Follow-up</option>
+          <option value="complaint">Complaint</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="contactMessage">Message *</label>
+        <textarea class="form-control" id="contactMessage" rows="5" placeholder="Tell us how we can help..." required></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">Send Message</button>
+    </form>
+
+    <div id="contactSuccess" class="form-success mt-1">
+      <h3 style="color:#155724;">✅ Message Sent!</h3>
+      <p>Thank you! We'll get back to you soon. For faster response, <a href="https://wa.me/254700000000">WhatsApp us</a>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <h4>Aego Cyber Cafe</h4>
+        <p style="font-size:0.9rem;">AI-powered digital services in Nyatike, Migori County.</p>
+      </div>
+      <div>
+        <h4>Services</h4>
+        <a href="services.html">All Services</a>
+        <a href="services.html#government">Government</a>
+        <a href="services.html#documents">Documents</a>
+      </div>
+      <div>
+        <h4>Quick Links</h4>
+        <a href="order.html">Order Online</a>
+        <a href="diaspora.html">Diaspora Services</a>
+        <a href="blog.html">Tips & Guides</a>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <a href="https://wa.me/254700000000">📱 WhatsApp Us</a>
+        <p style="font-size:0.85rem;margin-top:0.5rem;">M-Pesa Paybill: <strong>0115 965 493</strong></p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Aego Cyber Cafe, Nyatike, Migori County. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+<a href="https://wa.me/254700000000?text=Hello%20Aego%20Cyber%20Cafe!" class="whatsapp-float" aria-label="Chat on WhatsApp">💬</a>
+<script src="app.js"></script>
+</body>
+</html>
