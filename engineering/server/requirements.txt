@@ -1,0 +1,33 @@
+# Aego Cyber Cafe Server — Python Dependencies
+# Optimized for Raspberry Pi 5 (8GB RAM)
+
+# ── Web Framework ─────────────────────────────────────────────
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+python-multipart==0.0.18
+websockets==14.1
+
+# ── HTTP Client ───────────────────────────────────────────────
+httpx==0.28.1
+
+# ── Data Validation ───────────────────────────────────────────
+pydantic==2.10.4
+
+# ── Configuration ─────────────────────────────────────────────
+pyyaml==6.0.2
+
+# ── Telegram Bot ──────────────────────────────────────────────
+python-telegram-bot==21.10
+
+# ── PDF Generation (optional — for CV and forms) ─────────────
+# weasyprint==63.1  # Uncomment if PDF generation is needed
+# Requires system packages: libpango-1.0-0, libpangocairo-1.0-0, libgdk-pixbuf2.0-0
+
+# ── Audio Processing (for voice pipeline) ─────────────────────
+# numpy is pulled in by other deps; voice modules need it
+numpy>=1.26.0
+
+# ── Notes ─────────────────────────────────────────────────────
+# sqlite3 is stdlib — no install needed
+# weasyprint is optional; wkhtmltopdf is an alternative (system package)
+# For Raspberry Pi: pip install --no-cache-dir -r requirements.txt

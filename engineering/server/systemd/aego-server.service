@@ -1,0 +1,39 @@
+[Unit]
+Description=Aego Cyber Cafe API Server
+Documentation=https://github.com/aego-cyber-cafe
+After=network-online.target ollama.service
+Wants=network-online.target
+StartLimitIntervalSec=300
+StartLimitBurst=5
+
+[Service]
+Type=simple
+User=aego
+Group=aego
+WorkingDirectory=/opt/aego/server
+EnvironmentFile=/opt/aego/.env
+ExecStart=/opt/aego/venv/bin/python -m uvicorn main:app --host 0.0.0.0 --port 8000 --workers 1 --log-level info
+ExecReload=/bin/kill -HUP $MAINPID
+
+# Restart policy
+Restart=always
+RestartSec=5
+
+# Resource limits (Raspberry Pi 5 friendly)
+MemoryMax=1G
+CPUQuota=80%
+
+# Security hardening
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/opt/aego/data /opt/aego/output /opt/aego/logs
+PrivateTmp=yes
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=aego-server
+
+[Install]
+WantedBy=multi-user.target
