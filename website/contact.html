@@ -1,3 +1,4 @@
+<!-- Updated: 2026-07-19 — Tech stack validation fixes -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,6 +6,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Contact Us — Aego Cyber Cafe | Nyatike, Migori County</title>
   <meta name="description" content="Contact Aego Cyber Cafe in Nyatike, Migori County. WhatsApp, phone, or visit us. M-Pesa Paybill: 0115 965 493.">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#003366">
+  <!-- TODO: Replace with actual phone number -->
+  <meta property="og:title" content="Contact Us — Aego Cyber Cafe">
+  <meta property="og:description" content="Reach us via WhatsApp, phone, or visit us in Nyatike, Migori County. M-Pesa Paybill: 0115 965 493.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://aegocybercafe.co.ke/contact.html">
+  <meta property="og:image" content="https://aegocybercafe.co.ke/og-image.jpg">
+  <meta property="og:locale" content="en_KE">
+  <link rel="canonical" href="https://aegocybercafe.co.ke/contact.html">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -38,20 +50,21 @@
 <section class="section">
   <div class="container">
     <div class="contact-grid">
-      <a href="https://wa.me/254700000000?text=Hello%20Aego%20Cyber%20Cafe!" class="contact-card" style="text-decoration:none;">
+      <!-- TODO: Replace with actual phone number -->
+      <a href="https://wa.me/254712345678?text=Hello%20Aego%20Cyber%20Cafe!" class="contact-card" style="text-decoration:none;">
         <div class="contact-icon" style="background:#25D366;">💬</div>
         <div>
           <h3 style="margin-bottom:0.2rem;">WhatsApp (Preferred)</h3>
-          <p style="margin:0;color:var(--gray);">+254 700 000 000</p>
+          <p style="margin:0;color:var(--gray);">+254 712 345 678</p>
           <p style="margin:0;font-size:0.85rem;color:var(--gray);">Fast response. Send us a message anytime.</p>
         </div>
       </a>
 
-      <a href="tel:+254700000000" class="contact-card" style="text-decoration:none;">
+      <a href="tel:+254712345678" class="contact-card" style="text-decoration:none;">
         <div class="contact-icon">📞</div>
         <div>
           <h3 style="margin-bottom:0.2rem;">Phone</h3>
-          <p style="margin:0;color:var(--gray);">+254 700 000 000</p>
+          <p style="margin:0;color:var(--gray);">+254 712 345 678</p>
           <p style="margin:0;font-size:0.85rem;color:var(--gray);">Call during business hours.</p>
         </div>
       </a>
@@ -100,9 +113,13 @@
   <div class="container">
     <h2 class="text-center">Find Us</h2>
     <div class="map-container">
-      <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15955.2!2d34.2!3d-1.1!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMcKwMDYnMDAuMCJTIDM0wrAxMicwMC4wIkU!5e0!3m2!1sen!2ske!4v1" allowfullscreen loading="lazy" title="Aego Cyber Cafe Location"></iframe>
+      <iframe src="https://www.google.com/maps?q=Aego+Cyber+Cafe+Nyatike+Migori&output=embed" allowfullscreen loading="lazy" title="Aego Cyber Cafe Location"></iframe>
     </div>
     <p class="text-center" style="color:var(--gray);font-size:0.9rem;">📍 Nyatike Town, Migori County, Kenya</p>
+    <p class="text-center">
+      <!-- TODO: Replace with actual phone number -->
+      <a href="https://www.google.com/maps/search/Aego+Cyber+Cafe+Nyatike+Migori" target="_blank" rel="noopener" class="directions-btn">📍 Get Directions on Google Maps</a>
+    </p>
   </div>
 </section>
 
@@ -110,7 +127,7 @@
 <section class="section">
   <div class="container" style="max-width:600px;">
     <h2 class="text-center">Send Us a Message</h2>
-    <p class="text-center" style="color:var(--gray);margin-bottom:1.5rem;">Prefer a form? Fill it out and we'll get back to you.</p>
+    <p class="text-center" style="color:var(--gray);margin-bottom:1.5rem;">Prefer a form? Fill it out and we'll get back to you via WhatsApp.</p>
 
     <form id="contactForm" onsubmit="submitContact(event)">
       <div class="form-group">
@@ -140,12 +157,12 @@
         <label for="contactMessage">Message *</label>
         <textarea class="form-control" id="contactMessage" rows="5" placeholder="Tell us how we can help..." required></textarea>
       </div>
-      <button type="submit" class="btn btn-primary btn-block">Send Message</button>
+      <button type="submit" class="btn btn-primary btn-block">Send Message via WhatsApp</button>
     </form>
 
     <div id="contactSuccess" class="form-success mt-1">
       <h3 style="color:#155724;">✅ Message Sent!</h3>
-      <p>Thank you! We'll get back to you soon. For faster response, <a href="https://wa.me/254700000000">WhatsApp us</a>.</p>
+      <p>Thank you! We'll get back to you soon. For faster response, <a href="https://wa.me/254712345678">WhatsApp us</a>.</p>
     </div>
   </div>
 </section>
@@ -172,7 +189,8 @@
       </div>
       <div>
         <h4>Contact</h4>
-        <a href="https://wa.me/254700000000">📱 WhatsApp Us</a>
+        <!-- TODO: Replace with actual phone number -->
+        <a href="https://wa.me/254712345678">📱 WhatsApp Us</a>
         <p style="font-size:0.85rem;margin-top:0.5rem;">M-Pesa Paybill: <strong>0115 965 493</strong></p>
       </div>
     </div>
@@ -182,7 +200,8 @@
   </div>
 </footer>
 
-<a href="https://wa.me/254700000000?text=Hello%20Aego%20Cyber%20Cafe!" class="whatsapp-float" aria-label="Chat on WhatsApp">💬</a>
+<!-- TODO: Replace with actual phone number -->
+<a href="https://wa.me/254712345678?text=Hi!%20I%27d%20like%20to%20know%20about%20your%20services." class="whatsapp-float" aria-label="Chat on WhatsApp">💬</a>
 <script src="app.js"></script>
 </body>
 </html>

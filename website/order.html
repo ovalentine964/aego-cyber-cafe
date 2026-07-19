@@ -1,3 +1,4 @@
+<!-- Updated: 2026-07-19 — Tech stack validation fixes -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,6 +6,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Order Online — Aego Cyber Cafe | Pay via M-Pesa</title>
   <meta name="description" content="Order any service from Aego Cyber Cafe online. CV writing, KRA filing, business plans — pay via M-Pesa, get served from anywhere.">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#003366">
+  <!-- TODO: Replace with actual phone number -->
+  <meta property="og:title" content="Order Online — Aego Cyber Cafe">
+  <meta property="og:description" content="Order CV writing, KRA filing, printing & more online. Pay via M-Pesa, get documents on WhatsApp. Fast & reliable.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://aegocybercafe.co.ke/order.html">
+  <meta property="og:image" content="https://aegocybercafe.co.ke/og-image.jpg">
+  <meta property="og:locale" content="en_KE">
+  <link rel="canonical" href="https://aegocybercafe.co.ke/order.html">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -33,6 +45,17 @@
     <p class="subtitle">Fill the form below, pay via M-Pesa, and we'll get to work. Simple, fast, reliable.</p>
   </div>
 </section>
+
+<!-- NOSCRIPT FALLBACK -->
+<noscript>
+  <div style="background:#fff3cd;border:2px solid #ffc107;padding:1.5rem;border-radius:8px;text-align:center;margin:2rem auto;max-width:600px;">
+    <h3>⚠️ JavaScript Required</h3>
+    <p>This order form needs JavaScript to work. If you're having trouble:</p>
+    <!-- TODO: Replace with actual phone number -->
+    <p><strong>📱 WhatsApp us directly:</strong> <a href="https://wa.me/254712345678">+254 712 345 678</a></p>
+    <p><strong>📞 Call us:</strong> <a href="tel:+254712345678">+254 712 345 678</a></p>
+  </div>
+</noscript>
 
 <!-- ORDER STEPS -->
 <section class="section">
@@ -71,6 +94,19 @@
           <option value="">— Select category first —</option>
         </select>
       </div>
+
+      <!-- Price Display -->
+      <div id="priceDisplay" class="price-display">
+        <p class="price-label">Estimated Price</p>
+        <p class="price-amount" id="priceAmount"></p>
+      </div>
+
+      <!-- Upsell Add-ons -->
+      <div id="addonsSection" class="addons-section">
+        <h3>🔥 Popular Add-ons</h3>
+        <div id="addonsList"></div>
+      </div>
+
       <div class="form-group">
         <label for="serviceDetails">Additional Details (optional)</label>
         <textarea class="form-control" id="serviceDetails" rows="3" placeholder="Tell us more about what you need. E.g., 'I need a CV for a teaching position' or 'File my 2025 KRA returns'"></textarea>
@@ -166,8 +202,10 @@
       <p>1. We'll verify your M-Pesa payment<br>
       2. We'll start working on your service<br>
       3. We'll WhatsApp you when it's ready</p>
+      <p style="margin-top:0.5rem;font-size:0.9rem;color:var(--gray);">Opening WhatsApp with your order details...</p>
       <p style="margin-top:1rem;">
-        <a href="https://wa.me/254700000000?text=Hi!%20I%20just%20submitted%20an%20order%20on%20your%20website." class="btn btn-green">💬 Confirm on WhatsApp</a>
+        <!-- TODO: Replace with actual phone number -->
+        <a href="https://wa.me/254712345678?text=Hi!%20I%20just%20submitted%20an%20order%20on%20your%20website." class="btn btn-green">💬 Confirm on WhatsApp</a>
       </p>
     </div>
 
@@ -233,7 +271,8 @@
       </div>
       <div>
         <h4>Contact</h4>
-        <a href="https://wa.me/254700000000">📱 WhatsApp Us</a>
+        <!-- TODO: Replace with actual phone number -->
+        <a href="https://wa.me/254712345678">📱 WhatsApp Us</a>
         <p style="font-size:0.85rem;margin-top:0.5rem;">M-Pesa Paybill: <strong>0115 965 493</strong></p>
       </div>
     </div>
@@ -243,7 +282,8 @@
   </div>
 </footer>
 
-<a href="https://wa.me/254700000000?text=Hello%20Aego%20Cyber%20Cafe!" class="whatsapp-float" aria-label="Chat on WhatsApp">💬</a>
+<!-- TODO: Replace with actual phone number -->
+<a href="https://wa.me/254712345678?text=Hi!%20I%20want%20to%20place%20an%20order." class="whatsapp-float" aria-label="Chat on WhatsApp">💬</a>
 <script src="app.js"></script>
 </body>
 </html>

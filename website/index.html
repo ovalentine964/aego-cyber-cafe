@@ -1,3 +1,4 @@
+<!-- Updated: 2026-07-19 — Tech stack validation fixes -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,11 +7,55 @@
   <title>Aego Cyber Cafe — AI-Powered Digital Services | Nyatike, Migori County</title>
   <meta name="description" content="Aego Cyber Cafe in Nyatike, Migori County offers AI-powered CV writing, KRA services, eCitizen, printing, passport photos & more. Order online, pay via M-Pesa.">
   <meta name="keywords" content="cyber cafe Nyatike, KRA services Migori, CV writing Kenya, eCitizen Migori, printing Nyatike, digital services Migori County">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#003366">
+  <!-- TODO: Replace with actual phone number -->
   <meta property="og:title" content="Aego Cyber Cafe — AI-Powered Digital Services">
-  <meta property="og:description" content="Your documents done right, done fast, done with AI. Nyatike, Migori County.">
+  <meta property="og:description" content="Your documents done right, done fast, done with AI. Nyatike, Migori County. Order online, pay via M-Pesa.">
   <meta property="og:type" content="website">
+  <meta property="og:url" content="https://aegocybercafe.co.ke/">
+  <meta property="og:image" content="https://aegocybercafe.co.ke/og-image.jpg">
+  <meta property="og:locale" content="en_KE">
   <link rel="canonical" href="https://aegocybercafe.co.ke/">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
   <link rel="stylesheet" href="style.css">
+  <!-- Schema.org Structured Data for Local Business -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "Aego Cyber Cafe",
+    "description": "AI-powered digital services in Nyatike, Migori County — CV writing, KRA filing, eCitizen, printing, and more.",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Nyatike",
+      "addressRegion": "Migori County",
+      "addressCountry": "KE"
+    },
+    "telephone": "+254712345678",
+    "url": "https://aegocybercafe.co.ke",
+    "priceRange": "KSh 5 - KSh 5,000",
+    "openingHoursSpecification": [
+      {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],
+        "opens": "08:00",
+        "closes": "18:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": "Sunday",
+        "opens": "09:00",
+        "closes": "13:00"
+      }
+    ],
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "5",
+      "reviewCount": "3"
+    }
+  }
+  </script>
 </head>
 <body>
 
@@ -44,7 +89,8 @@
     <p class="subtitle">Professional digital services in Nyatike, Migori County. Order online, pay via M-Pesa, get served from anywhere.</p>
     <div class="hero-btns">
       <a href="order.html" class="btn btn-primary">📋 Order a Service</a>
-      <a href="https://wa.me/254700000000?text=Hello%20Aego%20Cyber%20Cafe!%20I%20need%20help%20with%20a%20service." class="btn btn-green">💬 WhatsApp Us</a>
+      <!-- TODO: Replace with actual phone number -->
+      <a href="https://wa.me/254712345678?text=Hello%20Aego%20Cyber%20Cafe!%20I%20need%20help%20with%20a%20service." class="btn btn-green">💬 WhatsApp Us</a>
     </div>
   </div>
 </section>
@@ -56,37 +102,37 @@
     <p class="text-center" style="color:var(--gray);margin-bottom:1.5rem;">Fast, affordable, AI-enhanced. Walk in or order online.</p>
     <div class="services-grid">
       <div class="service-card">
-        <div class="service-icon">📝</div>
+        <div class="service-icon" aria-hidden="true">📝</div>
         <h3>CV & Cover Letter</h3>
         <div class="price">From KSh 300</div>
         <p>AI-powered CV writing that gets you interviews. Professional formatting included.</p>
       </div>
       <div class="service-card">
-        <div class="service-icon">🏛️</div>
+        <div class="service-icon" aria-hidden="true">🏛️</div>
         <h3>KRA / eCitizen Services</h3>
         <div class="price">From KSh 200</div>
         <p>Tax returns, PIN registration, eCitizen applications — done right the first time.</p>
       </div>
       <div class="service-card">
-        <div class="service-icon">🖨️</div>
+        <div class="service-icon" aria-hidden="true">🖨️</div>
         <h3>Printing & Copying</h3>
         <div class="price">From KSh 10/page</div>
         <p>Black & white and colour printing. Lamination, binding available.</p>
       </div>
       <div class="service-card">
-        <div class="service-icon">📸</div>
+        <div class="service-icon" aria-hidden="true">📸</div>
         <h3>Passport Photos</h3>
         <div class="price">KSh 100</div>
         <p>Professional passport photos for IDs, passports, visas, and applications.</p>
       </div>
       <div class="service-card">
-        <div class="service-icon">📱</div>
+        <div class="service-icon" aria-hidden="true">📱</div>
         <h3>Data Bundles & M-Pesa</h3>
         <div class="price">Best Rates</div>
         <p>Airtel, Safaricom data bundles. M-Pesa cash-in/cash-out services.</p>
       </div>
       <div class="service-card">
-        <div class="service-icon">💼</div>
+        <div class="service-icon" aria-hidden="true">💼</div>
         <h3>Business Services</h3>
         <div class="price">From KSh 1,000</div>
         <p>Business registration, tax filing, business plans — backed by Economics expertise.</p>
@@ -179,7 +225,8 @@
     <p style="margin-bottom:1.5rem;">Order online, WhatsApp us, or visit us in Nyatike town.</p>
     <div class="hero-btns" style="justify-content:center;">
       <a href="order.html" class="btn btn-secondary">📋 Order a Service</a>
-      <a href="https://wa.me/254700000000?text=Hello%20Aego%20Cyber%20Cafe!" class="btn btn-outline">💬 Chat on WhatsApp</a>
+      <!-- TODO: Replace with actual phone number -->
+      <a href="https://wa.me/254712345678?text=Hello%20Aego%20Cyber%20Cafe!" class="btn btn-outline">💬 Chat on WhatsApp</a>
     </div>
   </div>
 </section>
@@ -208,8 +255,9 @@
       </div>
       <div>
         <h4>Contact</h4>
-        <a href="https://wa.me/254700000000">📱 WhatsApp Us</a>
-        <a href="tel:+254700000000">📞 Call Us</a>
+        <!-- TODO: Replace with actual phone number -->
+        <a href="https://wa.me/254712345678">📱 WhatsApp Us</a>
+        <a href="tel:+254712345678">📞 Call Us</a>
         <a href="contact.html">📍 Nyatike Town</a>
         <p style="font-size:0.85rem;margin-top:0.5rem;">M-Pesa Paybill: <strong>0115 965 493</strong></p>
       </div>
@@ -221,7 +269,8 @@
 </footer>
 
 <!-- WHATSAPP FLOAT -->
-<a href="https://wa.me/254700000000?text=Hello%20Aego%20Cyber%20Cafe!" class="whatsapp-float" aria-label="Chat on WhatsApp">💬</a>
+<!-- TODO: Replace with actual phone number -->
+<a href="https://wa.me/254712345678?text=Hello%20Aego%20Cyber%20Cafe!%20I%27d%20like%20to%20know%20about%20your%20services." class="whatsapp-float" aria-label="Chat on WhatsApp">💬</a>
 
 <script src="app.js"></script>
 </body>

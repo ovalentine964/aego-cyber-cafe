@@ -1,19 +1,20 @@
 /**
  * Aego Cyber Cafe - Main JavaScript
  * Lightweight, no dependencies. Mobile-first.
+ * Updated: 2026-07-19 — Tech stack validation fixes
  */
 
 // ============================================
 // Navigation Toggle
 // ============================================
 function toggleNav() {
-  const nav = document.getElementById('mainNav');
+  var nav = document.getElementById('mainNav');
   nav.classList.toggle('active');
 }
 
 // Close nav when clicking a link (mobile)
 document.addEventListener('DOMContentLoaded', function() {
-  const nav = document.getElementById('mainNav');
+  var nav = document.getElementById('mainNav');
   if (nav) {
     nav.querySelectorAll('a').forEach(function(link) {
       link.addEventListener('click', function() {
@@ -25,11 +26,52 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Close nav when clicking outside
 document.addEventListener('click', function(e) {
-  const nav = document.getElementById('mainNav');
-  const toggle = document.querySelector('.nav-toggle');
+  var nav = document.getElementById('mainNav');
+  var toggle = document.querySelector('.nav-toggle');
   if (nav && !nav.contains(e.target) && toggle && !toggle.contains(e.target)) {
     nav.classList.remove('active');
   }
+});
+
+// ============================================
+// Inline Validation Helpers
+// ============================================
+function clearFieldError(fieldId) {
+  var field = document.getElementById(fieldId);
+  if (!field) return;
+  field.classList.remove('error');
+  var errorEl = field.parentNode.querySelector('.field-error');
+  if (errorEl) {
+    errorEl.classList.remove('show');
+    errorEl.textContent = '';
+  }
+}
+
+function showFieldError(fieldId, message) {
+  var field = document.getElementById(fieldId);
+  if (!field) return;
+  field.classList.add('error');
+  var errorEl = field.parentNode.querySelector('.field-error');
+  if (!errorEl) {
+    errorEl = document.createElement('div');
+    errorEl.className = 'field-error';
+    field.parentNode.appendChild(errorEl);
+  }
+  errorEl.textContent = message;
+  errorEl.classList.add('show');
+  field.focus();
+}
+
+// Clear errors on input
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.form-control').forEach(function(el) {
+    el.addEventListener('input', function() {
+      clearFieldError(this.id);
+    });
+    el.addEventListener('change', function() {
+      clearFieldError(this.id);
+    });
+  });
 });
 
 // ============================================
@@ -101,7 +143,36 @@ var serviceData = {
   ]
 };
 
+// ============================================
+// Upsell Suggestions
+// ============================================
+var upsellMap = {
+  'cv-basic': [
+    { value: 'add-cover-letter', label: 'Add Cover Letter — KSh 150 more', price: 150 },
+    { value: 'add-linkedin', label: 'Add LinkedIn Profile — KSh 200 more', price: 200 }
+  ],
+  'cv-pro': [
+    { value: 'add-cover-letter', label: 'Add Cover Letter — KSh 150 more', price: 150 },
+    { value: 'add-linkedin', label: 'Add LinkedIn Profile — KSh 200 more', price: 200 }
+  ],
+  'cv-exec': [],
+  'kra-nil': [
+    { value: 'add-nhif', label: 'Add NHIF Registration — KSh 200 more', price: 200 }
+  ],
+  'kra-income': [
+    { value: 'add-nhif', label: 'Add NHIF Registration — KSh 200 more', price: 200 }
+  ],
+  'kra-pin': [
+    { value: 'add-nhif', label: 'Add NHIF Registration — KSh 200 more', price: 200 }
+  ],
+  'cover-letter': [
+    { value: 'add-linkedin', label: 'Add LinkedIn Profile — KSh 200 more', price: 200 }
+  ]
+};
+
+// ============================================
 // Dynamic field templates per service
+// ============================================
 var dynamicFieldTemplates = {
   'kra-pin': [
     { label: 'ID Number', id: 'idNumber', type: 'text', placeholder: 'Your national ID number', required: true },
@@ -164,8 +235,107 @@ function updateServices() {
     });
   }
 
-  // Update dynamic fields
+  // Hide price display and addons when category changes
+  var priceDisplay = document.getElementById('priceDisplay');
+  if (priceDisplay) priceDisplay.classList.remove('show');
+  var addons = document.getElementById('addonsSection');
+  if (addons) addons.classList.remove('show');
+
   updateDynamicFields();
+}
+
+function getServicePrice(serviceValue) {
+  for (var cat in serviceData) {
+    for (var i = 0; i < serviceData[cat].length; i++) {
+      if (serviceData[cat][i].value === serviceValue) {
+        return serviceData[cat][i].price;
+      }
+    }
+  }
+  return 0;
+}
+
+function getServiceLabel(serviceValue) {
+  for (var cat in serviceData) {
+    for (var i = 0; i < serviceData[cat].length; i++) {
+      if (serviceData[cat][i].value === serviceValue) {
+        return serviceData[cat][i].label;
+      }
+    }
+  }
+  return '';
+}
+
+function updatePriceDisplay() {
+  var serviceValue = document.getElementById('serviceType').value;
+  var priceDisplay = document.getElementById('priceDisplay');
+  var priceAmount = document.getElementById('priceAmount');
+  var addonsSection = document.getElementById('addonsSection');
+  var addonsList = document.getElementById('addonsList');
+
+  if (!priceDisplay || !priceAmount) return;
+
+  if (serviceValue) {
+    var price = getServicePrice(serviceValue);
+    if (price > 0) {
+      priceAmount.textContent = 'KSh ' + price.toLocaleString();
+    } else {
+      priceAmount.textContent = 'Contact us for pricing';
+    }
+    priceDisplay.classList.add('show');
+
+    // Show upsell suggestions
+    if (addonsSection && addonsList) {
+      addonsList.innerHTML = '';
+      var upsells = upsellMap[serviceValue];
+      if (upsells && upsells.length > 0) {
+        upsells.forEach(function(addon) {
+          var label = document.createElement('label');
+          label.className = 'addon-label';
+          var cb = document.createElement('input');
+          cb.type = 'checkbox';
+          cb.name = 'addon';
+          cb.value = addon.value;
+          cb.setAttribute('data-price', addon.price);
+          cb.addEventListener('change', updateTotalPrice);
+          label.appendChild(cb);
+          label.appendChild(document.createTextNode(' ' + addon.label));
+          addonsList.appendChild(label);
+        });
+        addonsSection.classList.add('show');
+      } else {
+        addonsSection.classList.remove('show');
+      }
+    }
+  } else {
+    priceDisplay.classList.remove('show');
+    if (addonsSection) addonsSection.classList.remove('show');
+  }
+
+  updateTotalPrice();
+}
+
+function updateTotalPrice() {
+  var serviceValue = document.getElementById('serviceType').value;
+  var priceAmount = document.getElementById('priceAmount');
+  if (!serviceValue || !priceAmount) return;
+
+  var basePrice = getServicePrice(serviceValue);
+  var addonTotal = 0;
+
+  var addonCheckboxes = document.querySelectorAll('#addonsList input[name="addon"]:checked');
+  addonCheckboxes.forEach(function(cb) {
+    addonTotal += parseInt(cb.getAttribute('data-price')) || 0;
+  });
+
+  if (basePrice > 0) {
+    var total = basePrice + addonTotal;
+    var text = 'KSh ' + total.toLocaleString();
+    if (addonTotal > 0) {
+      text += ' (KSh ' + basePrice.toLocaleString() + ' + KSh ' + addonTotal.toLocaleString() + ' add-ons)';
+    }
+    priceAmount.textContent = text;
+  }
 }
 
 function updateDynamicFields() {
@@ -219,7 +389,10 @@ function updateDynamicFields() {
 document.addEventListener('DOMContentLoaded', function() {
   var serviceType = document.getElementById('serviceType');
   if (serviceType) {
-    serviceType.addEventListener('change', updateDynamicFields);
+    serviceType.addEventListener('change', function() {
+      updateDynamicFields();
+      updatePriceDisplay();
+    });
   }
 
   // Pre-select service from URL
@@ -270,11 +443,11 @@ function validateStep(step) {
     var category = document.getElementById('serviceCategory').value;
     var service = document.getElementById('serviceType').value;
     if (!category) {
-      alert('Please select a service category.');
+      showFieldError('serviceCategory', 'Please select a service category.');
       return false;
     }
     if (!service) {
-      alert('Please select a specific service.');
+      showFieldError('serviceType', 'Please select a specific service.');
       return false;
     }
     return true;
@@ -284,85 +457,116 @@ function validateStep(step) {
     var name = document.getElementById('fullName').value.trim();
     var phone = document.getElementById('phone').value.trim();
     var whatsapp = document.getElementById('whatsapp').value.trim();
+    var valid = true;
 
-    if (!name) { alert('Please enter your full name.'); return false; }
-    if (!phone) { alert('Please enter your phone number.'); return false; }
-    if (!whatsapp) { alert('Please enter your WhatsApp number.'); return false; }
+    // Clear previous errors
+    clearFieldError('fullName');
+    clearFieldError('phone');
+    clearFieldError('whatsapp');
 
-    // Validate phone format (basic Kenyan)
-    var phoneClean = phone.replace(/\s/g, '');
-    if (!/^(\+?254|0)[17]\d{8}$/.test(phoneClean)) {
-      alert('Please enter a valid Kenyan phone number (e.g. 0712345678 or +254712345678).');
-      return false;
+    if (!name) {
+      showFieldError('fullName', 'Please enter your full name.');
+      valid = false;
+    }
+    if (!phone) {
+      showFieldError('phone', 'Please enter your phone number.');
+      valid = false;
+    }
+    if (!whatsapp) {
+      showFieldError('whatsapp', 'Please enter your WhatsApp number.');
+      valid = false;
     }
 
-    return true;
+    // Validate phone format (Kenyan numbers - broad match)
+    if (phone) {
+      var phoneClean = phone.replace(/\s/g, '');
+      if (!/^(\+?254|0)\d{9}$/.test(phoneClean)) {
+        showFieldError('phone', 'Please enter a valid Kenyan phone number (e.g. 0712345678 or +254712345678).');
+        valid = false;
+      }
+    }
+
+    return valid;
   }
 
   return true;
 }
 
 // ============================================
-// Submit Order
+// Submit Order — WhatsApp Redirect
 // ============================================
 function submitOrder() {
-  if (!validateStep(2)) return;
+  // Validate step 2 fields
+  var name = document.getElementById('fullName').value.trim();
+  var phone = document.getElementById('phone').value.trim();
+  var whatsapp = document.getElementById('whatsapp').value.trim();
+
+  clearFieldError('mpesaCode');
+  clearFieldError('amountPaid');
 
   var mpesaCode = document.getElementById('mpesaCode').value.trim();
   var amountPaid = document.getElementById('amountPaid').value.trim();
+  var valid = true;
 
   if (!mpesaCode) {
-    alert('Please enter your M-Pesa transaction code.');
-    return;
+    showFieldError('mpesaCode', 'Please enter your M-Pesa transaction code.');
+    valid = false;
   }
   if (!amountPaid) {
-    alert('Please enter the amount paid.');
-    return;
+    showFieldError('amountPaid', 'Please enter the amount paid.');
+    valid = false;
+  }
+  if (!name || !phone || !whatsapp) {
+    showFieldError('mpesaCode', 'Please go back and fill in your details.');
+    valid = false;
+  }
+  if (!valid) return;
+
+  // Collect form data
+  var serviceType = document.getElementById('serviceType');
+  var serviceLabel = serviceType.options[serviceType.selectedIndex].text;
+  var details = document.getElementById('serviceDetails').value;
+  var location = document.getElementById('location').value;
+
+  // Collect add-ons
+  var addonText = '';
+  var addonCheckboxes = document.querySelectorAll('#addonsList input[name="addon"]:checked');
+  if (addonCheckboxes.length > 0) {
+    var addons = [];
+    addonCheckboxes.forEach(function(cb) {
+      addons.push(cb.parentNode.textContent.trim());
+    });
+    addonText = '\nAdd-ons: ' + addons.join(', ');
   }
 
-  // Collect all form data
-  var orderData = {
-    service: document.getElementById('serviceType').value,
-    serviceLabel: document.getElementById('serviceType').options[document.getElementById('serviceType').selectedIndex].text,
-    category: document.getElementById('serviceCategory').value,
-    details: document.getElementById('serviceDetails').value,
-    name: document.getElementById('fullName').value,
-    phone: document.getElementById('phone').value,
-    email: document.getElementById('email').value,
-    whatsapp: document.getElementById('whatsapp').value,
-    location: document.getElementById('location').value,
-    mpesaCode: mpesaCode,
-    amountPaid: amountPaid,
-    timestamp: new Date().toISOString()
-  };
-
-  // Log order (in production, this would POST to a server)
-  console.log('ORDER SUBMITTED:', orderData);
+  // Build WhatsApp message
+  var waMsg = '📋 NEW ORDER\n\n' +
+    'Service: ' + serviceLabel + '\n' +
+    'Name: ' + name + '\n' +
+    'Phone: ' + phone + '\n' +
+    'M-Pesa Code: ' + mpesaCode + '\n' +
+    'Amount: KSh ' + amountPaid + addonText + '\n' +
+    (details ? 'Details: ' + details + '\n' : '') +
+    (location ? 'Location: ' + location + '\n' : '') +
+    '\nSent from aegocybercafe.co.ke';
 
   // Show success message
   document.getElementById('step3').style.display = 'none';
   document.getElementById('successMessage').classList.add('show');
 
-  // In production: send order data to server via fetch()
-  // fetch('/api/orders', { method: 'POST', body: JSON.stringify(orderData) });
+  // Auto-redirect to WhatsApp
+  var waUrl = 'https://wa.me/254712345678?text=' + encodeURIComponent(waMsg);
 
-  // For now, construct a WhatsApp message with order details
-  var waMsg = encodeURIComponent(
-    '📋 NEW ORDER\n\n' +
-    'Service: ' + orderData.serviceLabel + '\n' +
-    'Name: ' + orderData.name + '\n' +
-    'Phone: ' + orderData.phone + '\n' +
-    'M-Pesa Code: ' + orderData.mpesaCode + '\n' +
-    'Amount: KSh ' + orderData.amountPaid + '\n' +
-    (orderData.details ? 'Details: ' + orderData.details + '\n' : '') +
-    (orderData.location ? 'Location: ' + orderData.location + '\n' : '')
-  );
-
-  // Update the success WhatsApp link
+  // Update the WhatsApp confirm link
   var waLink = document.querySelector('#successMessage .btn-green');
   if (waLink) {
-    waLink.href = 'https://wa.me/254700000000?text=' + waMsg;
+    waLink.href = waUrl;
   }
+
+  // Auto-open WhatsApp after short delay
+  setTimeout(function() {
+    window.open(waUrl, '_blank');
+  }, 1500);
 
   window.scrollTo({ top: 300, behavior: 'smooth' });
 }
@@ -376,18 +580,41 @@ function submitContact(e) {
   var name = document.getElementById('contactName').value.trim();
   var phone = document.getElementById('contactPhone').value.trim();
   var message = document.getElementById('contactMessage').value.trim();
+  var valid = true;
 
-  if (!name || !phone || !message) {
-    alert('Please fill in all required fields.');
-    return;
+  clearFieldError('contactName');
+  clearFieldError('contactPhone');
+  clearFieldError('contactMessage');
+
+  if (!name) {
+    showFieldError('contactName', 'Please enter your name.');
+    valid = false;
   }
+  if (!phone) {
+    showFieldError('contactPhone', 'Please enter your phone number.');
+    valid = false;
+  }
+  if (!message) {
+    showFieldError('contactMessage', 'Please enter your message.');
+    valid = false;
+  }
+  if (!valid) return;
+
+  // Send via WhatsApp
+  var waMsg = '💬 CONTACT MESSAGE\n\n' +
+    'Name: ' + name + '\n' +
+    'Phone: ' + phone + '\n' +
+    'Message: ' + message + '\n' +
+    '\nSent from aegocybercafe.co.ke';
+
+  var waUrl = 'https://wa.me/254712345678?text=' + encodeURIComponent(waMsg);
 
   // Show success
   document.getElementById('contactForm').style.display = 'none';
   document.getElementById('contactSuccess').classList.add('show');
 
-  // In production: send to server
-  console.log('CONTACT FORM:', { name: name, phone: phone, message: message });
+  // Open WhatsApp
+  window.open(waUrl, '_blank');
 }
 
 // ============================================
@@ -396,10 +623,13 @@ function submitContact(e) {
 document.addEventListener('DOMContentLoaded', function() {
   document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
     anchor.addEventListener('click', function(e) {
-      var target = document.querySelector(this.getAttribute('href'));
-      if (target) {
-        e.preventDefault();
-        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      var href = this.getAttribute('href');
+      if (href.length > 1) {
+        var target = document.querySelector(href);
+        if (target) {
+          e.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
       }
     });
   });

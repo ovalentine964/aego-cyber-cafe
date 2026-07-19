@@ -871,3 +871,176 @@ select.form-control {
 
   .map-container iframe { height: 450px; }
 }
+
+/* ============================================
+   FOCUS VISIBLE (Keyboard Accessibility)
+   ============================================ */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--white);
+  outline-offset: 2px;
+}
+
+.nav-toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ============================================
+   FORM VALIDATION ERRORS
+   ============================================ */
+.field-error {
+  color: #dc3545;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+  display: none;
+}
+
+.field-error.show { display: block; }
+
+.form-control.error {
+  border-color: #dc3545;
+}
+
+/* ============================================
+   PRICE DISPLAY & ADDONS
+   ============================================ */
+.price-display {
+  display: none;
+  background: var(--light);
+  padding: 1rem;
+  border-radius: var(--radius);
+  text-align: center;
+  margin: 1rem 0;
+}
+
+.price-display.show { display: block; }
+
+.price-display .price-label {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--gray);
+}
+
+.price-display .price-amount {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.addons-section {
+  display: none;
+  margin: 1rem 0;
+  padding: 1rem;
+  background: #fff8f0;
+  border: 1px solid #ffe0b2;
+  border-radius: var(--radius);
+}
+
+.addons-section.show { display: block; }
+
+.addons-section h3 {
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
+  color: var(--accent);
+}
+
+.addon-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.addon-label:last-child { border-bottom: none; }
+
+.addon-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+}
+
+/* ============================================
+   WHATSAPP SHARE BUTTON (Blog posts)
+   ============================================ */
+.wa-share-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: #25D366;
+  color: var(--white);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  margin-top: 1rem;
+}
+
+.wa-share-btn:hover {
+  background: #1da851;
+  text-decoration: none;
+}
+
+/* ============================================
+   GET DIRECTIONS BUTTON
+   ============================================ */
+.directions-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--primary);
+  color: var(--white);
+  padding: 0.6rem 1.2rem;
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  margin-top: 0.5rem;
+}
+
+.directions-btn:hover {
+  background: var(--primary-light);
+  text-decoration: none;
+  color: var(--white);
+}
+
+/* ============================================
+   PRINT STYLES
+   ============================================ */
+@media print {
+  .header, .nav-toggle, .nav, .whatsapp-float,
+  .cta-section, .footer, .hero-btns, .btn,
+  .wa-share-btn, .directions-btn { display: none !important; }
+
+  body { color: #000; background: #fff; font-size: 12pt; }
+
+  .hero { background: none !important; color: #000; padding: 1rem 0; }
+  .hero h1 { color: #000; }
+  .hero .badge { border: 1px solid #000; background: none; color: #000; }
+
+  .section { padding: 1rem 0; }
+  .section-alt { background: none; }
+
+  .service-card, .why-item, .testimonial, .contact-card {
+    box-shadow: none; border: 1px solid #ccc; break-inside: avoid;
+  }
+
+  .price-table { font-size: 10pt; }
+  .price-table th { background: #f0f0f0 !important; color: #000 !important; }
+
+  a { color: #000; text-decoration: underline; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; }
+
+  .payment-box { border: 2px solid #000; }
+
+  .blog-card { break-inside: avoid; }
+}
