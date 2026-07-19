@@ -1,0 +1,12 @@
+{
+  "name": "aego-cyber-cafe",
+  "version": "1.0.0",
+  "description": "Aego Cyber Cafe — AI-Powered Digital Services in Nyatike, Migori County",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
