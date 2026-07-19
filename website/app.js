@@ -125,8 +125,7 @@ var serviceData = {
   student: [
     { value: 'school-app', label: 'School Application — KSh 300', price: 300 },
     { value: 'scholarship', label: 'Scholarship Essay — KSh 500', price: 500 },
-    { value: 'research', label: 'Research Project — KSh 1,500', price: 1500 },
-    { value: 'internet', label: 'Internet Access — KSh 1/min', price: 0 }
+    { value: 'research', label: 'Research Project — KSh 1,500', price: 1500 }
   ],
   business: [
     { value: 'biz-name', label: 'Business Name Registration — KSh 1,500', price: 1500 },
