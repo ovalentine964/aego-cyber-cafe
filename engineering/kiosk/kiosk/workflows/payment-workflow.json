@@ -1,0 +1,240 @@
+{
+  "name": "Aego — M-Pesa Payment Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "mpesa/stkpush",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "trigger-stk",
+      "name": "STK Push Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "const body = items[0].json.body || items[0].json;\n\n// Validate phone number\nlet phone = (body.phone || '').replace(/\\D/g, '');\nif (phone.startsWith('0')) phone = '254' + phone.substring(1);\nif (!phone.startsWith('254')) phone = '254' + phone;\n\nconst amount = parseInt(body.amount) || 0;\nif (amount < 1) {\n  return [{ json: { error: 'Invalid amount', status: 'failed' } }];\n}\nif (phone.length !== 12) {\n  return [{ json: { error: 'Invalid phone number', status: 'failed' } }];\n}\n\nreturn [{\n  json: {\n    phone: phone,\n    amount: amount,\n    service: body.service || 'unknown',\n    account_ref: body.account_ref || 'AEGO-' + Date.now(),\n    timestamp: new Date().toISOString()\n  }\n}];"
+      },
+      "id": "validate-payment",
+      "name": "Validate Payment",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [470, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            { "value1": "={{$json.error}}", "operation": "isEmpty" }
+          ]
+        }
+      },
+      "id": "check-validation",
+      "name": "Valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [690, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ error: $json.error, status: 'failed' }) }}"
+      },
+      "id": "respond-err",
+      "name": "Return Error",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [910, 200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.MPESA_API_URL}}/stkpush/v1/processrequest",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            { "name": "BusinessShortCode", "value": "={{$env.MPESA_SHORTCODE}}" },
+            { "name": "Password", "value": "={{$env.MPESA_PASSWORD}}" },
+            { "name": "Timestamp", "value": "={{$env.MPESA_TIMESTAMP}}" },
+            { "name": "TransactionType", "value": "CustomerPayBillOnline" },
+            { "name": "Amount", "value": "={{$json.amount}}" },
+            { "name": "PartyA", "value": "={{$json.phone}}" },
+            { "name": "PartyB", "value": "={{$env.MPESA_SHORTCODE}}" },
+            { "name": "PhoneNumber", "value": "={{$json.phone}}" },
+            { "name": "CallBackURL", "value": "={{$env.MPESA_CALLBACK_URL}}" },
+            { "name": "AccountReference", "value": "={{$json.account_ref}}" },
+            { "name": "TransactionDesc", "value": "Aego Cyber - {{$json.service}}" }
+          ]
+        }
+      },
+      "id": "stk-push",
+      "name": "M-Pesa STK Push",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [1130, 400]
+    },
+    {
+      "parameters": {
+        "functionCode": "const mpesaResponse = items[0].json;\nconst requestData = $('Validate Payment').first().json;\n\nconst checkoutId = mpesaResponse.CheckoutRequestID || mpesaResponse.checkoutRequestId || '';\nconst responseCode = mpesaResponse.ResponseCode || mpesaResponse.responseCode || '';\n\nif (responseCode !== '0' && responseCode !== 0) {\n  return [{ json: { error: mpesaResponse.errorMessage || mpesaResponse.ResponseDescription || 'STK push failed', status: 'failed' } }];\n}\n\n// Save pending payment to DB\nreturn [{\n  json: {\n    checkoutRequestId: checkoutId,\n    phone: requestData.phone,\n    amount: requestData.amount,\n    service: requestData.service,\n    account_ref: requestData.account_ref,\n    status: 'pending',\n    created_at: new Date().toISOString()\n  }\n}];"
+      },
+      "id": "process-stk-response",
+      "name": "Process STK Response",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [1350, 400]
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "table": "payments",
+        "columns": "checkout_request_id, phone, amount, service, account_ref, status, created_at"
+      },
+      "id": "save-payment",
+      "name": "Save Payment",
+      "type": "n8n-nodes-base.sqlite",
+      "typeVersion": 1,
+      "position": [1570, 400]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ checkoutRequestId: $('Process STK Response').first().json.checkoutRequestId, status: 'pending', message: 'Check your phone for M-Pesa prompt' }) }}"
+      },
+      "id": "respond-stk",
+      "name": "Return Checkout ID",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1790, 400]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "mpesa/callback",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "mpesa-callback",
+      "name": "M-Pesa Callback",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 600]
+    },
+    {
+      "parameters": {
+        "functionCode": "const callback = items[0].json.body || items[0].json;\nconst stkCallback = callback.Body?.stkCallback || callback.StkCallback || callback;\n\nconst resultCode = stkCallback.ResultCode || stkCallback.resultCode;\nconst resultDesc = stkCallback.ResultDesc || stkCallback.resultDesc || '';\nconst checkoutId = stkCallback.CheckoutRequestID || stkCallback.checkoutRequestId || '';\n\nlet mpesaReceipt = '';\nlet amount = 0;\nlet phone = '';\n\nif (resultCode === 0 || resultCode === '0') {\n  // Payment successful\n  const metadata = stkCallback.CallbackMetadata?.Item || stkCallback.callbackMetadata?.item || [];\n  for (const item of metadata) {\n    if (item.Name === 'MpesaReceiptNumber' || item.name === 'MpesaReceiptNumber') mpesaReceipt = item.Value || item.value;\n    if (item.Name === 'Amount' || item.name === 'Amount') amount = item.Value || item.value;\n    if (item.Name === 'PhoneNumber' || item.name === 'PhoneNumber') phone = item.Value || item.value;\n  }\n}\n\nreturn [{\n  json: {\n    checkoutRequestId: checkoutId,\n    result_code: resultCode,\n    result_desc: resultDesc,\n    mpesa_receipt: mpesaReceipt,\n    amount: amount,\n    phone: phone,\n    status: (resultCode === 0 || resultCode === '0') ? 'success' : 'failed',\n    timestamp: new Date().toISOString()\n  }\n}];"
+      },
+      "id": "parse-callback",
+      "name": "Parse Callback",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [470, 600]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "table": "payments",
+        "updateKey": "checkout_request_id",
+        "columns": "status, mpesa_receipt, completed_at"
+      },
+      "id": "update-payment",
+      "name": "Update Payment Status",
+      "type": "n8n-nodes-base.sqlite",
+      "typeVersion": 1,
+      "position": [690, 600]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            { "value1": "={{$json.status}}", "value2": "success" }
+          ]
+        }
+      },
+      "id": "check-success",
+      "name": "Payment Success?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [910, 600]
+    },
+    {
+      "parameters": {
+        "functionCode": "const payment = items[0].json;\n\nreturn [{\n  json: {\n    type: 'payment_confirmed',\n    checkoutRequestId: payment.checkoutRequestId,\n    mpesa_receipt: payment.mpesa_receipt,\n    amount: payment.amount,\n    phone: payment.phone,\n    message: `Payment of KES ${payment.amount} confirmed. M-Pesa ref: ${payment.mpesa_receipt}`,\n    timestamp: payment.timestamp\n  }\n}];"
+      },
+      "id": "notify-payment-success",
+      "name": "Prepare Success Notification",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [1130, 500]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.OPENCLAW_GATEWAY_URL}}/api/notify",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            { "name": "type", "value": "payment_confirmed" },
+            { "name": "data", "value": "={{JSON.stringify($json)}}" }
+          ]
+        }
+      },
+      "id": "send-payment-notification",
+      "name": "Send Notification",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [1350, 500]
+    },
+    {
+      "parameters": {
+        "waitAmount": 60,
+        "waitUnit": "seconds"
+      },
+      "id": "payment-timeout",
+      "name": "Wait 60s",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [470, 800]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT * FROM payments WHERE checkout_request_id = '{{$node[\"Parse Callback\"].json.checkoutRequestId}}' AND status = 'pending'"
+      },
+      "id": "check-timeout",
+      "name": "Check Still Pending",
+      "type": "n8n-nodes-base.sqlite",
+      "typeVersion": 1,
+      "position": [690, 800]
+    }
+  ],
+  "connections": {
+    "STK Push Trigger": { "main": [[{ "node": "Validate Payment", "type": "main", "index": 0 }]] },
+    "Validate Payment": { "main": [[{ "node": "Valid?", "type": "main", "index": 0 }]] },
+    "Valid?": {
+      "main": [
+        [{ "node": "M-Pesa STK Push", "type": "main", "index": 0 }],
+        [{ "node": "Return Error", "type": "main", "index": 0 }]
+      ]
+    },
+    "M-Pesa STK Push": { "main": [[{ "node": "Process STK Response", "type": "main", "index": 0 }]] },
+    "Process STK Response": { "main": [[{ "node": "Save Payment", "type": "main", "index": 0 }]] },
+    "Save Payment": { "main": [[{ "node": "Return Checkout ID", "type": "main", "index": 0 }]] },
+    "M-Pesa Callback": { "main": [[{ "node": "Parse Callback", "type": "main", "index": 0 }]] },
+    "Parse Callback": { "main": [[{ "node": "Update Payment Status", "type": "main", "index": 0 }]] },
+    "Update Payment Status": { "main": [[{ "node": "Payment Success?", "type": "main", "index": 0 }]] },
+    "Payment Success?": {
+      "main": [
+        [{ "node": "Prepare Success Notification", "type": "main", "index": 0 }],
+        []
+      ]
+    },
+    "Prepare Success Notification": { "main": [[{ "node": "Send Notification", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "tags": [{ "name": "aego" }, { "name": "mpesa" }, { "name": "payment" }]
+}

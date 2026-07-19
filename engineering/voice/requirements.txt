@@ -1,0 +1,20 @@
+# requirements.txt — Aego Cyber Cafe Voice Pipeline
+# Optimized for Raspberry Pi 5 (8GB RAM)
+
+# Audio I/O
+sounddevice>=0.4.6          # cross-platform audio I/O (lighter than PyAudio)
+numpy>=1.24.0               # audio buffer math
+scipy>=1.10.0               # signal processing (filters, resampling)
+
+# Configuration
+PyYAML>=6.0                 # config.yaml parsing
+
+# HTTP / API
+requests>=2.28.0            # Ollama REST API calls
+websocket-client>=1.6.0     # Ollama WebSocket streaming
+
+# Logging
+colorlog>=6.7.0             # colored console logs (optional but helpful)
+
+# Optional: Porcupine wake word (uncomment if using wake-word mode)
+# pvporcupine>=3.0.0        # Picovoice Porcupine — requires API key

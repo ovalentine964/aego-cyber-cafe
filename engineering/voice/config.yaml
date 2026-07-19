@@ -1,0 +1,93 @@
+# Aego Cyber Cafe Voice Pipeline Configuration
+# Nyatike, Migori County, Kenya
+
+# ── Audio Devices ──────────────────────────────────────────────
+# Use `python3 -c "import sounddevice; print(sounddevice.query_devices())"` to list devices
+microphone:
+  device_index: null          # null = system default USB mic
+  sample_rate: 16000          # 16 kHz — optimal for Whisper
+  channels: 1                 # mono
+  block_duration_ms: 30       # frame size for VAD (30 ms standard)
+  max_record_seconds: 30      # auto-stop after this many seconds of speech
+
+speaker:
+  device_index: null          # null = system default USB speaker
+  sample_rate: 22050          # Piper default output rate
+  channels: 1
+
+# ── Voice Activity Detection ──────────────────────────────────
+vad:
+  energy_threshold: 0.015     # RMS energy to detect speech (tune per environment)
+  silence_timeout_sec: 1.5    # stop recording after this much silence
+  min_speech_duration_sec: 0.3  # ignore bursts shorter than this
+  pre_speech_buffer_sec: 0.3  # keep audio before speech detected
+
+# ── Speech-to-Text ────────────────────────────────────────────
+stt:
+  # Whisper.cpp settings
+  whisper_bin: "/usr/local/bin/whisper-cli"   # path to whisper.cpp binary
+  model_path: "/home/work/models/ggml-tiny.bin"  # tiny model (fast, ~75 MB)
+  model_path_base: "/home/work/models/ggml-base.bin"  # base model (better, ~142 MB)
+  use_model: "tiny"           # "tiny" or "base"
+  language: "auto"            # "auto", "sw" (Swahili), "en" (English), "lu" (Dholuo)
+  confidence_threshold: 0.7   # below this, fall back to Gemma native audio
+  beam_size: 3                # whisper.cpp beam size
+  no_timestamps: true
+
+  # Gemma 4 native audio fallback
+  gemma_audio_fallback: true  # use Gemma 4 native audio input when Whisper fails
+
+# ── LLM (Ollama + Gemma 4) ───────────────────────────────────
+ollama:
+  endpoint: "http://localhost:11434"
+  model: "gemma4-e4b"         # Gemma 4 E4B with native audio
+  timeout_sec: 30
+  system_prompt: |
+    You are Aego, a helpful voice assistant at Aego Cyber Cafe in Nyatike, Migori County, Kenya.
+    You help customers with cyber cafe services: printing, photocopying, internet access,
+    document typing, M-Pesa transactions, and government service applications (eCitizen, NHIF, NSSF).
+    Respond in the same language the customer uses. Be concise — aim for 1-3 sentences.
+    Common languages: Swahili, English, Dholuo, Kikuyu.
+    Be warm, respectful, and patient — many customers are semi-literate.
+  temperature: 0.7
+  max_tokens: 200
+
+# ── Text-to-Speech (Piper) ───────────────────────────────────
+tts:
+  piper_bin: "/usr/local/bin/piper"    # path to piper binary
+  voices:
+    sw: "/home/work/models/piper/sw_CD-medium.onnx"      # Swahili voice
+    en: "/home/work/models/piper/en_US-medium.onnx"       # English voice
+    # Add Dholuo/Kikuyu voices here when available
+  default_voice: "sw"          # default to Swahili
+  speed: 1.0                   # 1.0 = normal, 0.8 = slower for clarity
+  volume: 0.9                  # 0.0 to 1.0
+  sample_rate: 22050
+
+# ── Wake Word Detection ──────────────────────────────────────
+wake_word:
+  enabled: false               # disabled by default — use push-to-talk for reliability
+  keywords: ["aego", "hey aego", "habari aego"]
+  sensitivity: 0.5             # 0.0 (strict) to 1.0 (lenient)
+  cooldown_sec: 3              # ignore triggers within this window
+
+# ── Operation Modes ──────────────────────────────────────────
+mode: "push_to_push"           # "push_to_talk" | "always_listening" | "wake_word"
+# push_to_talk: press Enter to start recording
+# always_listening: always recording, VAD-based
+# wake_word: listen for wake word, then process
+
+# ── Logging ──────────────────────────────────────────────────
+logging:
+  level: "INFO"                # DEBUG | INFO | WARNING | ERROR
+  file: "voice-pipeline.log"
+  max_size_mb: 10
+  console: true
+  log_audio_levels: false      # log audio energy levels (verbose)
+
+# ── Performance (Raspberry Pi 5) ─────────────────────────────
+performance:
+  whisper_threads: 2           # limit CPU threads for Whisper
+  ollama_num_threads: 2        # limit CPU threads for Ollama
+  tts_chunk_size: 1024         # audio buffer size for streaming TTS
+  preload_models: true         # load models at startup vs on-demand

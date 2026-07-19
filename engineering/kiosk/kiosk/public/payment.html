@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#1B5E20">
+  <title>Aego — Payment</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .payment-container {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 24px 16px;
+      text-align: center;
+    }
+    .payment-icon {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 16px;
+      background: #E8F5E9;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+    }
+    .payment-service {
+      font-size: 1rem;
+      color: var(--text-light);
+      margin-bottom: 8px;
+    }
+    .phone-input-group {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      max-width: 320px;
+      margin: 16px auto;
+    }
+    .phone-prefix {
+      background: #F5F5F5;
+      border: 2px solid var(--border);
+      border-right: none;
+      border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+      padding: 14px 12px;
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .phone-input-group input {
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    }
+    .payment-status-card {
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 32px 24px;
+      margin: 24px 0;
+    }
+    .stk-animation {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 16px;
+      border: 4px solid var(--primary-light);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    .payment-timer {
+      font-size: 0.875rem;
+      color: var(--text-light);
+      margin-top: 12px;
+    }
+    .payment-timer .time {
+      font-weight: 700;
+      color: var(--warning);
+      font-size: 1.125rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="offlineBanner" class="offline-banner">⚡ No internet — payment requires connection</div>
+
+  <!-- Header -->
+  <div class="header">
+    <button class="back-btn" onclick="history.back()">←</button>
+    <span class="header-title">💳 Payment</span>
+    <div></div>
+  </div>
+
+  <div class="payment-container" id="paymentContainer">
+
+    <!-- Step 1: Payment Details -->
+    <div id="payStep1">
+      <div class="payment-icon">💳</div>
+      <h2>Payment Required</h2>
+      <p class="payment-service" id="payServiceName">CV Writing Service</p>
+
+      <div class="mpesa-amount" id="payAmount">KES 100</div>
+
+      <p class="text-muted mb-2">Pay with M-Pesa — enter your phone number below</p>
+
+      <div class="phone-input-group">
+        <span class="phone-prefix">+254</span>
+        <input type="tel" class="form-input" id="payPhone" placeholder="712345678" maxlength="9" style="flex:1">
+      </div>
+
+      <button class="btn btn-success btn-block btn-lg" id="payBtn" onclick="initiatePayment()">
+        📱 Pay with M-Pesa
+      </button>
+
+      <div class="mt-3">
+        <p class="text-sm text-muted">You will receive an M-Pesa prompt on your phone.<br>Enter your PIN to complete payment.</p>
+      </div>
+    </div>
+
+    <!-- Step 2: Waiting for STK Push -->
+    <div id="payStep2" class="hidden">
+      <div class="payment-status-card">
+        <div class="stk-animation"></div>
+        <h2>Check Your Phone</h2>
+        <p class="text-muted mt-1">An M-Pesa payment request has been sent to</p>
+        <p class="mpesa-phone" id="payPhoneDisplay">+254 712 345 678</p>
+        <p class="text-muted mt-2">Enter your M-Pesa PIN on your phone to complete payment.</p>
+        <div class="payment-timer">
+          Expires in <span class="time" id="payTimer">60</span> seconds
+        </div>
+      </div>
+
+      <button class="btn btn-ghost btn-block mt-2" onclick="cancelPayment()">Cancel Payment</button>
+    </div>
+
+    <!-- Step 3: Payment Success -->
+    <div id="payStep3" class="hidden">
+      <div class="payment-status-card">
+        <div class="payment-check">
+          <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+        </div>
+        <h2>Payment Successful! ✅</h2>
+        <p class="text-muted mt-1">KES <span id="paidAmount">100</span> received</p>
+
+        <!-- Receipt -->
+        <div class="receipt mt-3" id="receiptSection">
+          <div class="receipt-header">
+            <strong>AEGO CYBER CAFE</strong><br>
+            Nyatike, Migori County<br>
+            Tel: +254 XXX XXX XXX
+          </div>
+          <div class="receipt-row">
+            <span>Service</span>
+            <span id="receiptService">CV Writing</span>
+          </div>
+          <div class="receipt-row">
+            <span>Date</span>
+            <span id="receiptDate"></span>
+          </div>
+          <div class="receipt-row">
+            <span>M-Pesa Ref</span>
+            <span id="receiptRef">—</span>
+          </div>
+          <div class="receipt-row">
+            <span>Phone</span>
+            <span id="receiptPhone">—</span>
+          </div>
+          <div class="receipt-row receipt-total">
+            <span>TOTAL</span>
+            <span id="receiptTotal">KES 100</span>
+          </div>
+          <div class="receipt-footer">
+            Thank you for choosing Aego Cyber Cafe!<br>
+            Asante! 🙏
+          </div>
+        </div>
+      </div>
+
+      <div class="flex gap-sm mt-2">
+        <button class="btn btn-primary" onclick="printReceipt()" style="flex:1">🖨️ Print Receipt</button>
+        <button class="btn btn-accent" onclick="window.location.href='index.html'" style="flex:1">🏠 Done</button>
+      </div>
+    </div>
+
+    <!-- Step 4: Payment Failed -->
+    <div id="payStep4" class="hidden">
+      <div class="payment-status-card">
+        <div style="font-size:3rem;margin-bottom:16px">❌</div>
+        <h2>Payment Failed</h2>
+        <p class="text-muted mt-1" id="failReason">The payment was not completed.</p>
+      </div>
+      <div class="flex gap-sm mt-2">
+        <button class="btn btn-primary" onclick="retryPayment()" style="flex:1">🔄 Try Again</button>
+        <button class="btn btn-ghost" onclick="window.location.href='index.html'" style="flex:1">🏠 Home</button>
+      </div>
+    </div>
+
+  </div>
+
+  <div id="toastContainer" class="toast-container"></div>
+
+  <script src="app.js"></script>
+  <script>
+    // === PAYMENT PAGE LOGIC ===
+    const params = new URLSearchParams(window.location.search);
+    const serviceType = params.get('service') || 'unknown';
+    const amount = params.get('amount') || '100';
+    const lang = params.get('lang') || 'en';
+    let checkoutRequestId = null;
+    let pollTimer = null;
+    let countdownTimer = null;
+
+    // Service name map
+    const serviceNames = {
+      cv: 'CV Writing', gov: 'Government Service', translate: 'Translation',
+      print: 'Printing', data: 'Data Bundle', typing: 'Typing / Forms'
+    };
+
+    // Initialize
+    document.getElementById('payServiceName').textContent = serviceNames[serviceType] || serviceType;
+    document.getElementById('payAmount').textContent = `KES ${amount}`;
+    document.getElementById('receiptService').textContent = serviceNames[serviceType] || serviceType;
+    document.getElementById('receiptTotal').textContent = `KES ${amount}`;
+    document.getElementById('paidAmount').textContent = amount;
+    document.getElementById('receiptDate').textContent = new Date().toLocaleString('en-KE');
+
+    // Load saved phone
+    const savedPhone = localStorage.getItem('aego_phone');
+    if (savedPhone) document.getElementById('payPhone').value = savedPhone;
+
+    function formatPhone(num) {
+      // Remove leading 0, ensure 9 digits
+      num = num.replace(/\D/g, '');
+      if (num.startsWith('0')) num = num.substring(1);
+      if (num.startsWith('254')) num = num.substring(3);
+      return num.substring(0, 9);
+    }
+
+    async function initiatePayment() {
+      const phoneInput = document.getElementById('payPhone').value;
+      const phone = formatPhone(phoneInput);
+
+      if (phone.length < 9) {
+        showToast('Please enter a valid phone number.', 'warning');
+        return;
+      }
+
+      // Save phone for next time
+      localStorage.setItem('aego_phone', phoneInput);
+
+      const fullPhone = '254' + phone;
+
+      // Show loading
+      document.getElementById('payBtn').disabled = true;
+      document.getElementById('payBtn').innerHTML = '<div class="spinner" style="width:24px;height:24px;border-width:3px"></div> Sending...';
+
+      try {
+        const res = await fetch('/api/mpesa/stkpush', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            phone: fullPhone,
+            amount: parseInt(amount),
+            service: serviceType,
+            account_ref: `AEGO-${serviceType.toUpperCase()}-${Date.now()}`
+          })
+        });
+
+        const data = await res.json();
+
+        if (data.checkoutRequestId || data.CheckoutRequestID) {
+          checkoutRequestId = data.checkoutRequestId || data.CheckoutRequestID;
+          showStep(2);
+          document.getElementById('payPhoneDisplay').textContent = '+254 ' + phone.substring(0, 3) + ' ' + phone.substring(3, 6) + ' ' + phone.substring(6);
+          startPaymentPolling();
+          startCountdown(60);
+        } else {
+          showStep(4);
+          document.getElementById('failReason').textContent = data.error || data.errorMessage || 'Could not initiate payment.';
+        }
+      } catch (err) {
+        showStep(4);
+        document.getElementById('failReason').textContent = 'Network error. Check your connection and try again.';
+      }
+
+      document.getElementById('payBtn').disabled = false;
+      document.getElementById('payBtn').innerHTML = '📱 Pay with M-Pesa';
+    }
+
+    function startPaymentPolling() {
+      let attempts = 0;
+      pollTimer = setInterval(async () => {
+        attempts++;
+        if (attempts > 30) { // 60 seconds max
+          clearInterval(pollTimer);
+          showStep(4);
+          document.getElementById('failReason').textContent = 'Payment timed out. Please try again.';
+          return;
+        }
+
+        try {
+          const res = await fetch(`/api/mpesa/status/${checkoutRequestId}`);
+          const data = await res.json();
+
+          if (data.status === 'success' || data.ResultCode === '0') {
+            clearInterval(pollTimer);
+            clearInterval(countdownTimer);
+            document.getElementById('receiptRef').textContent = data.mpesaReceiptNumber || data.receipt || '—';
+            document.getElementById('receiptPhone').textContent = document.getElementById('payPhoneDisplay').textContent;
+            showStep(3);
+            // Notify backend
+            fetch('/api/payment/confirm', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                checkoutRequestId,
+                service: serviceType,
+                amount: parseInt(amount),
+                receipt: data.mpesaReceiptNumber || data.receipt
+              })
+            }).catch(() => {});
+          } else if (data.status === 'failed' || data.ResultCode === '1032') {
+            clearInterval(pollTimer);
+            clearInterval(countdownTimer);
+            showStep(4);
+            document.getElementById('failReason').textContent = data.status === 'failed' ? 'Payment was cancelled.' : 'Payment request expired.';
+          }
+        } catch (err) {
+          // Silent fail, will retry
+        }
+      }, 2000);
+    }
+
+    function startCountdown(seconds) {
+      const el = document.getElementById('payTimer');
+      el.textContent = seconds;
+      countdownTimer = setInterval(() => {
+        seconds--;
+        el.textContent = seconds;
+        if (seconds <= 0) {
+          clearInterval(countdownTimer);
+        }
+      }, 1000);
+    }
+
+    function cancelPayment() {
+      clearInterval(pollTimer);
+      clearInterval(countdownTimer);
+      showStep(1);
+    }
+
+    function retryPayment() {
+      showStep(1);
+    }
+
+    function showStep(n) {
+      for (let i = 1; i <= 4; i++) {
+        document.getElementById('payStep' + i).classList.toggle('hidden', i !== n);
+      }
+    }
+
+    function printReceipt() {
+      window.print();
+    }
+
+    // Keyboard for phone input
+    document.getElementById('payPhone').addEventListener('input', function() {
+      this.value = this.value.replace(/\D/g, '').substring(0, 10);
+    });
+  </script>
+</body>
+</html>

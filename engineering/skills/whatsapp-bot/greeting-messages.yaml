@@ -1,0 +1,348 @@
+# Multilingual Greeting Messages for Aego Cyber Cafe WhatsApp Bot
+# Languages: English (en), Swahili (sw), Dholuo (luo), Kikuyu (ki)
+
+# ── First-Time Greetings ──
+greetings:
+  first_time:
+    en: |
+      👋 Welcome to Aego Cyber Cafe — Nyatike!
+
+      We are your trusted cyber cafe. Here are our services:
+
+      🖨️ *Basic Services:*
+      • Printing — KES 5/page (bw) | KES 10 (color)
+      • Copy — KES 5/page
+      • Scan — KES 20/page
+      • Passport Photo — KES 100
+
+      📄 *CV & Job Applications:*
+      • CV only — KES 300
+      • CV + Cover Letter — KES 450
+
+      🏛️ *Government Services:*
+      • KRA PIN — KES 150
+      • eCitizen — KES 150-200
+      • NHIF — KES 150-200
+      • NSSF — KES 150-200
+      • NTSA (Driving License) — KES 300
+      • HELB — KES 150-200
+
+      🌐 *Other Services:*
+      • Online Application (Job/Uni/Visa) — KES 200-500
+      • Data Bundles — Market price
+      • Translation — Free (with any service)
+
+      💬 Please tell us what service you need!
+
+    sw: |
+      👋 Karibu Aego Cyber Cafe — Nyatike!
+
+      Sisi ni cyber cafe yako ya kutegemewa. Tunatoa huduma zifuatazo:
+
+      🖨️ *Huduma za Msingi:*
+      • Printing — KES 5/page (nyeupe) | KES 10 (rangi)
+      • Copy — KES 5/page
+      • Scan — KES 20/page
+      • Passport Photo — KES 100
+
+      📄 *CV & Maombi ya Kazi:*
+      • CV tu — KES 300
+      • CV + Cover Letter — KES 450
+
+      🏛️ *Huduma za Serikali:*
+      • KRA PIN — KES 150
+      • eCitizen — KES 150-200
+      • NHIF — KES 150-200
+      • NSSF — KES 150-200
+      • NTSA (Leseni) — KES 300
+      • HELB — KES 150-200
+
+      🌐 *Huduma Nyingine:*
+      • Online Application (Kazi/Chuo/Visa) — KES 200-500
+      • Data Bundles — Bei ya soko
+      • Translation — Bure (na huduma nyingine)
+
+      💬 Tafadhali tufahamishe unahitaji huduma gani!
+
+    luo: |
+      👋 Maraba e Aego Cyber Cafe — Nyatike!
+
+      Wanyalo ni cyber cafe mae ngʼato. Nyalo gi tiende mag piny koro:
+
+      🖨️ *Tiende Mag Base:*
+      • Printing — KES 5/page (rer) | KES 10 (rangi)
+      • Copy — KES 5/page
+      • Scan — KES 20/page
+      • Passport Photo — KES 100
+
+      📄 *CV & Miyo Kaze:*
+      • CV moro — KES 300
+      • CV + Barua mag kaze — KES 450
+
+      🏛️ *Tiende Mag Guok:*
+      • KRA PIN — KES 150
+      • eCitizen — KES 150-200
+      • NHIF — KES 150-200
+      • NSSF — KES 150-200
+      • NTSA (Leseni) — KES 300
+      • HELB — KES 150-200
+
+      🌐 *Tiende Moko:*
+      • Online Application (Kaze/Sikul/Visa) — KES 200-500
+      • Data Bundles — Chuth gi soko
+      • Translation — Mane (gi tiende moko)
+
+      💬 Yien ihero tiende angʼo!
+
+  returning:
+    en: |
+      👋 Welcome back, {name}!
+
+      What service do you need today?
+      1️⃣ CV / Cover Letter
+      2️⃣ Government Services (KRA, eCitizen, NHIF, etc.)
+      3️⃣ Printing / Scan / Copy
+      4️⃣ Passport Photo
+      5️⃣ Online Application
+      6️⃣ Data Bundles
+      7️⃣ Other
+
+      Reply with a number or describe what you need.
+
+    sw: |
+      👋 Karibu tena, {name}!
+
+      Unahitaji huduma gani leo?
+      1️⃣ CV / Cover Letter
+      2️⃣ Huduma za Serikali (KRA, eCitizen, NHIF, n.k.)
+      3️⃣ Printing / Scan / Copy
+      4️⃣ Passport Photo
+      5️⃣ Online Application
+      6️⃣ Data Bundles
+      7️⃣ Nyingineyo
+
+      Jibu kwa nambari au andika unachohitaji.
+
+    luo: |
+      👋 Maraba machiel, {name}!
+
+      Ihero tiende angʼo kinde mane?
+      1️⃣ CV / Barua mag kaze
+      2️⃣ Tiende mag Guok (KRA, eCitizen, NHIF, ne)
+      3️⃣ Printing / Scan / Copy
+      4️⃣ Passport Photo
+      5️⃣ Online Application
+      6️⃣ Data Bundles
+      7️⃣ Moko
+
+      Warah nambari kata yien ihero angʼo.
+
+# ── Service Menu Templates ──
+service_menus:
+  gov_services:
+    en: |
+      🏛️ *Government Services*
+
+      Which service do you need?
+      1️⃣ KRA PIN (Registration/Retrieval/Returns) — KES 150-200
+      2️⃣ eCitizen (Account/Good Conduct/Birth Cert) — KES 150-200
+      3️⃣ NHIF (Registration/Card/Statement) — KES 150-200
+      4️⃣ NSSF (Registration/Statement) — KES 150-200
+      5️⃣ NTSA (Driving License/Logbook) — KES 300
+      6️⃣ HELB (Loan Application/Statement) — KES 150-200
+      0️⃣ Back to main menu
+
+    sw: |
+      🏛️ *Huduma za Serikali*
+
+      Unahitaji huduma gani?
+      1️⃣ KRA PIN (Usajili/Kupata/Returns) — KES 150-200
+      2️⃣ eCitizen (Akaunti/Maadili/Cheti) — KES 150-200
+      3️⃣ NHIF (Usajili/Kadi/Ripoti) — KES 150-200
+      4️⃣ NSSF (Usajili/Ripoti) — KES 150-200
+      5️⃣ NTSA (Leseni/Kitabu) — KES 300
+      6️⃣ HELB (Mkopo/Ripoti) — KES 150-200
+      0️⃣ Rudi kwenye menyu kuu
+
+  cv_services:
+    en: |
+      📄 *CV & Cover Letter Services*
+
+      What do you need?
+      1️⃣ CV only — KES 300
+      2️⃣ CV + Cover Letter — KES 450
+
+      We'll guide you step by step to create a professional CV.
+      You can type or send voice notes — we'll handle it!
+
+    sw: |
+      📄 *CV & Barua ya Kazi*
+
+      Unahitaji nini?
+      1️⃣ CV tu — KES 300
+      2️⃣ CV + Barua ya Kazi — KES 450
+
+      Tukuongoza hatua kwa hatua kutengeneza CV ya kitaalamu.
+      Unaweza kuandika au kutuma voice note — tutashughulikia!
+
+# ── Error & Clarification Messages ──
+errors:
+  not_understood:
+    en: |
+      😊 Sorry, I didn't understand that.
+
+      Could you please:
+      1️⃣ Type a number from the menu
+      2️⃣ Or describe what you need in simple words
+
+      Examples:
+      • "I need a CV"
+      • "KRA PIN"
+      • "Print documents"
+
+    sw: |
+      😊 Samahani, sijaelewa vizuri.
+
+      Tafadhali:
+      1️⃣ Andika nambari kutoka kwenye menyu
+      2️⃣ Au eleza unachohitaji kwa maneno rahisi
+
+      Mifano:
+      • "Nataka CV"
+      • "KRA PIN"
+      • "Nataka kuchapisha"
+
+    luo: |
+      😊 Mohoni, ok anangʼo gi kamano.
+
+      Yien:
+      1️⃣ Cochi nambari ma ok gi menyu
+      2️⃣ Kata yien ihero angʼo gi wuoyo maber
+
+      Nimiro:
+      • "Nhero CV"
+      • "KRA PIN"
+      • "Nhero choopo"
+
+  multiple_attempts:
+    en: |
+      😅 I'm having trouble understanding.
+
+      Let me connect you with our staff — they'll help you right away!
+
+      📞 Call: [phone number]
+      🏪 Visit: Aego Cyber Cafe, Nyatike
+
+      Or try again by typing:
+      • "menu" — to see all services
+      • "help" — for assistance
+
+    sw: |
+      😅 Ninashindwa kuelewa.
+
+      Hebu nikupatie mmoja wa wafanyakazi wetu — atakusaidia mara moja!
+
+      📞 Piga: [nambari ya simu]
+      🏪 Kuja: Aego Cyber Cafe, Nyatike
+
+      Au jaribu tena kwa kuandika:
+      • "menyu" — kuona huduma zote
+      • "msaada" — kwa msaada
+
+  payment_failed:
+    en: |
+      ❌ Payment was not successful.
+
+      This could be because:
+      • Insufficient M-Pesa balance
+      • You entered wrong PIN
+      • Network issue
+
+      Would you like to:
+      1️⃣ Try payment again
+      2️⃣ Pay later (visit the shop)
+      3️⃣ Cancel this service
+
+    sw: |
+      ❌ Malipo hayajafanika.
+
+      Hii inaweza kuwa kwa sababu:
+      • Salio la M-Pesa halitoshi
+      • Uliweka PIN mbaya
+      • Tatizo la mtandao
+
+      Je, ungependa:
+      1️⃣ Jaribu malipo tena
+      2️⃣ Lipa baadaye (kuja dukani)
+      3️⃣ Futa huduma hii
+
+# ── After-Hours Messages ──
+after_hours:
+  en: |
+    🌙 Aego Cyber Cafe is currently closed.
+
+    🕐 Business hours: Monday-Saturday, 7AM - 8PM
+    📍 Location: Nyatike, Migori County
+
+    You can leave a message and we'll reply tomorrow morning.
+
+    Type "menu" to see our services and prices.
+
+  sw: |
+    🌙 Aego Cyber Cafe imefungwa sasa.
+
+    ⏰ Masaa ya kazi: Jumatatu-Jumamosi, 7AM - 8PM
+    📍 Mahali: Nyatike, Migori County
+
+    Unaweza kutuachia ujumbe na tutakujibu kesho asubuhi.
+
+    Andika "menyu" kuona huduma na bei zetu.
+
+# ── Confirmation Messages ──
+confirmations:
+  service_started:
+    en: "✅ Great! Let's get started with {service}. I'll guide you step by step."
+    sw: "✅ Sawa! Tuanze na {service}. Nitakuongoza hatua kwa hatua."
+
+  payment_received:
+    en: "✅ Payment confirmed! KES {amount} received via M-Pesa. Receipt: {receipt}"
+    sw: "✅ Malipo yamethibitishwa! KES {amount} imepokelewa kupitia M-Pesa. Risiti: {receipt}"
+
+  service_complete:
+    en: |
+      ✅ {service} is complete!
+
+      {details}
+
+      Is there anything else I can help you with?
+      Reply "menu" to see other services.
+
+    sw: |
+      ✅ {service} imekamilika!
+
+      {details}
+
+      Je, kuna kitu kingine ninachoweza kukusaidia?
+      Jibu "menyu" kuona huduma nyingine.
+
+  goodbye:
+    en: |
+      👋 Thank you for using Aego Cyber Cafe!
+
+      Come again soon. Have a great day! 🌟
+
+      Type "hi" anytime to reach us.
+
+    sw: |
+      👋 Asante kutumia Aego Cyber Cafe!
+
+      Karibu tena. Uwe na siku njema! 🌟
+
+      Andika "hi" wakati wowote kutufikia.
+
+# ── Contact Information ──
+contact:
+  phone: "07XX XXX XXX"
+  location: "Nyatike, Migori County, Kenya"
+  hours: "Monday-Saturday, 7:00 AM - 8:00 PM"
+  hours_sw: "Jumatatu-Jumamosi, 7:00 asubuhi - 8:00 jioni"

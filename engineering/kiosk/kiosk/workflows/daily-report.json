@@ -1,0 +1,110 @@
+{
+  "name": "Aego — Daily Report (8 PM)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            { "field": "cronExpression", "expression": "0 20 * * *" }
+          ]
+        }
+      },
+      "id": "trigger-daily",
+      "name": "Daily at 8 PM",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  COUNT(*) as total_requests,\n  SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) as total_revenue,\n  SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending_count,\n  SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed_count,\n  SUM(CASE WHEN service_type = 'cv' THEN 1 ELSE 0 END) as cv_count,\n  SUM(CASE WHEN service_type = 'cv' AND status = 'completed' THEN amount ELSE 0 END) as cv_revenue,\n  SUM(CASE WHEN service_type = 'gov' THEN 1 ELSE 0 END) as gov_count,\n  SUM(CASE WHEN service_type = 'gov' AND status = 'completed' THEN amount ELSE 0 END) as gov_revenue,\n  SUM(CASE WHEN service_type = 'translate' THEN 1 ELSE 0 END) as translate_count,\n  SUM(CASE WHEN service_type = 'translate' AND status = 'completed' THEN amount ELSE 0 END) as translate_revenue,\n  SUM(CASE WHEN service_type = 'print' THEN 1 ELSE 0 END) as print_count,\n  SUM(CASE WHEN service_type = 'print' AND status = 'completed' THEN amount ELSE 0 END) as print_revenue,\n  SUM(CASE WHEN service_type = 'data' THEN 1 ELSE 0 END) as data_count,\n  SUM(CASE WHEN service_type = 'data' AND status = 'completed' THEN amount ELSE 0 END) as data_revenue,\n  SUM(CASE WHEN service_type = 'typing' THEN 1 ELSE 0 END) as typing_count,\n  SUM(CASE WHEN service_type = 'typing' AND status = 'completed' THEN amount ELSE 0 END) as typing_revenue\nFROM requests\nWHERE DATE(created_at) = DATE('now', 'localtime')"
+      },
+      "id": "query-today",
+      "name": "Query Today's Stats",
+      "type": "n8n-nodes-base.sqlite",
+      "typeVersion": 1,
+      "position": [470, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  COUNT(*) as total_requests,\n  SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) as total_revenue,\n  SUM(CASE WHEN service_type = 'cv' THEN 1 ELSE 0 END) as cv_count,\n  SUM(CASE WHEN service_type = 'gov' THEN 1 ELSE 0 END) as gov_count,\n  SUM(CASE WHEN service_type = 'translate' THEN 1 ELSE 0 END) as translate_count,\n  SUM(CASE WHEN service_type = 'print' THEN 1 ELSE 0 END) as print_count,\n  SUM(CASE WHEN service_type = 'data' THEN 1 ELSE 0 END) as data_count,\n  SUM(CASE WHEN service_type = 'typing' THEN 1 ELSE 0 END) as typing_count\nFROM requests\nWHERE DATE(created_at) >= DATE('now', 'localtime', 'weekday 0', '-6 days')"
+      },
+      "id": "query-week",
+      "name": "Query This Week",
+      "type": "n8n-nodes-base.sqlite",
+      "typeVersion": 1,
+      "position": [470, 500]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT COUNT(*) as payment_count, SUM(amount) as total_payments FROM payments WHERE status = 'success' AND DATE(created_at) = DATE('now', 'localtime')"
+      },
+      "id": "query-payments",
+      "name": "Query Payments",
+      "type": "n8n-nodes-base.sqlite",
+      "typeVersion": 1,
+      "position": [470, 700]
+    },
+    {
+      "parameters": {
+        "functionCode": "const today = $('Query Today\\'s Stats').first().json;\nconst week = $('Query This Week').first().json;\nconst payments = $('Query Payments').first().json;\n\nconst date = new Date().toLocaleDateString('en-KE', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });\n\n// Find most popular service\nconst services = [\n  { name: 'CV Writing', count: today.cv_count || 0, revenue: today.cv_revenue || 0 },\n  { name: 'Gov Services', count: today.gov_count || 0, revenue: today.gov_revenue || 0 },\n  { name: 'Translation', count: today.translate_count || 0, revenue: today.translate_revenue || 0 },\n  { name: 'Printing', count: today.print_count || 0, revenue: today.print_revenue || 0 },\n  { name: 'Data Bundles', count: today.data_count || 0, revenue: today.data_revenue || 0 },\n  { name: 'Typing', count: today.typing_count || 0, revenue: today.typing_revenue || 0 }\n];\nservices.sort((a, b) => b.count - a.count);\nconst topService = services[0];\n\nconst report = `📊 AEGO CYBER CAFE — DAILY REPORT\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📅 ${date}\n\n💰 TODAY'S REVENUE\n   Total: KES ${(today.total_revenue || 0).toLocaleString()}\n   Payments: ${payments.payment_count || 0} successful\n\n📋 TODAY'S REQUESTS\n   Total: ${today.total_requests || 0}\n   Completed: ${today.completed_count || 0}\n   Pending: ${today.pending_count || 0}\n\n🏆 SERVICES BREAKDOWN\n   CV Writing:    ${today.cv_count || 0} requests — KES ${(today.cv_revenue || 0).toLocaleString()}\n   Gov Services:  ${today.gov_count || 0} requests — KES ${(today.gov_revenue || 0).toLocaleString()}\n   Translation:   ${today.translate_count || 0} requests — KES ${(today.translate_revenue || 0).toLocaleString()}\n   Printing:      ${today.print_count || 0} requests — KES ${(today.print_revenue || 0).toLocaleString()}\n   Data Bundles:  ${today.data_count || 0} requests — KES ${(today.data_revenue || 0).toLocaleString()}\n   Typing:        ${today.typing_count || 0} requests — KES ${(today.typing_revenue || 0).toLocaleString()}\n\n📈 THIS WEEK\n   Total Requests: ${week.total_requests || 0}\n   Total Revenue: KES ${(week.total_revenue || 0).toLocaleString()}\n\n⭐ Most Popular: ${topService.name} (${topService.count} requests)\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nAego Cyber Cafe • Nyatike, Migori`;\n\nreturn [{\n  json: {\n    report: report,\n    stats: {\n      today_revenue: today.total_revenue || 0,\n      today_requests: today.total_requests || 0,\n      week_revenue: week.total_revenue || 0,\n      week_requests: week.total_requests || 0,\n      top_service: topService.name\n    }\n  }\n}];"
+      },
+      "id": "generate-report",
+      "name": "Generate Report",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [690, 400]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.OPENCLAW_GATEWAY_URL}}/api/whatsapp/send",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            { "name": "phone", "value": "={{$env.VALENTINE_WHATSAPP}}" },
+            { "name": "message", "value": "={{$json.report}}" }
+          ]
+        }
+      },
+      "id": "send-report",
+      "name": "Send to Valentine",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [910, 400]
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "table": "daily_reports",
+        "columns": "report_date, revenue, requests, top_service, report_text, created_at"
+      },
+      "id": "save-report",
+      "name": "Save Report",
+      "type": "n8n-nodes-base.sqlite",
+      "typeVersion": 1,
+      "position": [1130, 400]
+    }
+  ],
+  "connections": {
+    "Daily at 8 PM": {
+      "main": [
+        [
+          { "node": "Query Today's Stats", "type": "main", "index": 0 },
+          { "node": "Query This Week", "type": "main", "index": 0 },
+          { "node": "Query Payments", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Query Today's Stats": { "main": [[{ "node": "Generate Report", "type": "main", "index": 0 }]] },
+    "Query This Week": { "main": [[]] },
+    "Query Payments": { "main": [[]] },
+    "Generate Report": { "main": [[{ "node": "Send to Valentine", "type": "main", "index": 0 }]] },
+    "Send to Valentine": { "main": [[{ "node": "Save Report", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "tags": [{ "name": "aego" }, { "name": "report" }, { "name": "daily" }]
+}

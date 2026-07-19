@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cover Letter - {{FULL_NAME}}</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 25mm 25mm 25mm 25mm;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            font-size: 11.5pt;
+            line-height: 1.6;
+            color: #333;
+            background: #fff;
+        }
+
+        .letter-container {
+            max-width: 210mm;
+            margin: 0 auto;
+            padding: 30px 40px;
+        }
+
+        /* Sender Info */
+        .sender-info {
+            margin-bottom: 25px;
+        }
+
+        .sender-info .name {
+            font-size: 16pt;
+            font-weight: 700;
+            color: #1a252f;
+            margin-bottom: 3px;
+        }
+
+        .sender-info .contact-line {
+            font-size: 10pt;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        /* Date */
+        .letter-date {
+            font-size: 10.5pt;
+            color: #555;
+            margin-bottom: 20px;
+        }
+
+        /* Recipient */
+        .recipient-info {
+            margin-bottom: 20px;
+            font-size: 10.5pt;
+        }
+
+        .recipient-info .rec-name {
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        /* Subject Line */
+        .letter-subject {
+            font-size: 11pt;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            text-decoration: underline;
+        }
+
+        /* Body */
+        .letter-body p {
+            font-size: 11pt;
+            text-align: justify;
+            margin-bottom: 12px;
+            text-indent: 0;
+        }
+
+        .letter-body p:first-child {
+            text-indent: 0;
+        }
+
+        /* Closing */
+        .letter-closing {
+            margin-top: 25px;
+        }
+
+        .letter-closing .closing-text {
+            font-size: 11pt;
+            margin-bottom: 40px;
+        }
+
+        .letter-closing .signature-name {
+            font-size: 11pt;
+            font-weight: 700;
+            color: #1a252f;
+        }
+
+        /* Responsive */
+        @media screen and (max-width: 768px) {
+            .letter-container {
+                padding: 20px 15px;
+            }
+        }
+
+        @media print {
+            .letter-container {
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="letter-container">
+
+        <!-- SENDER INFORMATION -->
+        <div class="sender-info">
+            <div class="name">{{FULL_NAME}}</div>
+            <div class="contact-line">📞 {{PHONE}}</div>
+            {{#EMAIL}}<div class="contact-line">✉️ {{EMAIL}}</div>{{/EMAIL}}
+            {{#LOCATION}}<div class="contact-line">📍 {{LOCATION}}</div>{{/LOCATION}}
+        </div>
+
+        <!-- DATE -->
+        <div class="letter-date">{{DATE}}</div>
+
+        <!-- RECIPIENT -->
+        {{#RECIPIENT}}
+        <div class="recipient-info">
+            <div class="rec-name">{{RECIPIENT_NAME}}</div>
+            {{#RECIPIENT_TITLE}}<div>{{RECIPIENT_TITLE}}</div>{{/RECIPIENT_TITLE}}
+            {{#COMPANY}}<div>{{COMPANY}}</div>{{/COMPANY}}
+            {{#COMPANY_ADDRESS}}<div>{{COMPANY_ADDRESS}}</div>{{/COMPANY_ADDRESS}}
+        </div>
+        {{/RECIPIENT}}
+
+        {{^RECIPIENT}}
+        <div class="recipient-info">
+            <div class="rec-name">The Hiring Manager</div>
+            <div>[Company Name]</div>
+            <div>[Company Address]</div>
+        </div>
+        {{/RECIPIENT}}
+
+        <!-- SUBJECT -->
+        <div class="letter-subject">
+            RE: Application for the Position of {{JOB_TITLE}}
+        </div>
+
+        <!-- SALUTATION -->
+        <div class="letter-body">
+            <p>Dear {{SALUTATION}},</p>
+
+            <!-- OPENING PARAGRAPH -->
+            <p>
+                I am writing to express my strong interest in the {{JOB_TITLE}} position
+                {{#COMPANY}}at {{COMPANY}}{{/COMPANY}}. {{OPENING_PARAGRAPH}}
+            </p>
+
+            <!-- BODY PARAGRAPH 1 - Qualifications -->
+            <p>
+                {{BODY_PARAGRAPH_1}}
+            </p>
+
+            <!-- BODY PARAGRAPH 2 - Experience & Value -->
+            <p>
+                {{BODY_PARAGRAPH_2}}
+            </p>
+
+            <!-- BODY PARAGRAPH 3 - Motivation -->
+            {{#BODY_PARAGRAPH_3}}
+            <p>
+                {{BODY_PARAGRAPH_3}}
+            </p>
+            {{/BODY_PARAGRAPH_3}}
+
+            <!-- CLOSING PARAGRAPH -->
+            <p>
+                {{CLOSING_PARAGRAPH}}
+            </p>
+
+            <p>
+                Thank you for considering my application. I look forward to the opportunity
+                to discuss how I can contribute to your team. Please feel free to contact me
+                at {{PHONE}} {{#EMAIL}}or {{EMAIL}}{{/EMAIL}} at your convenience.
+            </p>
+        </div>
+
+        <!-- CLOSING -->
+        <div class="letter-closing">
+            <div class="closing-text">Yours sincerely,</div>
+            <div class="signature-name">{{FULL_NAME}}</div>
+        </div>
+
+    </div>
+</body>
+</html>

@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV - {{FULL_NAME}}</title>
+    <style>
+        /* A4 Print Format */
+        @page {
+            size: A4;
+            margin: 15mm 20mm;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            font-size: 11pt;
+            line-height: 1.5;
+            color: #2c3e50;
+            background: #fff;
+        }
+
+        .cv-container {
+            max-width: 210mm;
+            margin: 0 auto;
+            padding: 20px 30px;
+        }
+
+        /* Header / Personal Info */
+        .cv-header {
+            text-align: center;
+            border-bottom: 3px solid #2c3e50;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .cv-header h1 {
+            font-size: 24pt;
+            font-weight: 700;
+            color: #1a252f;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+        }
+
+        .cv-header .contact-info {
+            font-size: 10pt;
+            color: #555;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .cv-header .contact-info span {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .cv-header .contact-info .separator {
+            color: #ccc;
+        }
+
+        /* Section Styling */
+        .cv-section {
+            margin-bottom: 18px;
+        }
+
+        .cv-section h2 {
+            font-size: 13pt;
+            font-weight: 700;
+            color: #2c3e50;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 4px;
+            margin-bottom: 10px;
+        }
+
+        /* Summary */
+        .summary-text {
+            font-size: 10.5pt;
+            color: #444;
+            text-align: justify;
+            padding: 5px 0;
+        }
+
+        /* Education & Experience Entries */
+        .entry {
+            margin-bottom: 12px;
+            padding-left: 0;
+        }
+
+        .entry-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+        }
+
+        .entry-title {
+            font-weight: 700;
+            font-size: 11pt;
+            color: #2c3e50;
+        }
+
+        .entry-date {
+            font-size: 10pt;
+            color: #777;
+            font-style: italic;
+        }
+
+        .entry-subtitle {
+            font-size: 10.5pt;
+            color: #3498db;
+            font-weight: 600;
+            margin-top: 2px;
+        }
+
+        .entry-details {
+            margin-top: 4px;
+            padding-left: 18px;
+        }
+
+        .entry-details li {
+            font-size: 10.5pt;
+            color: #444;
+            margin-bottom: 2px;
+        }
+
+        /* Skills */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .skill-category {
+            margin-bottom: 5px;
+        }
+
+        .skill-category strong {
+            font-size: 10.5pt;
+            color: #2c3e50;
+        }
+
+        .skill-category span {
+            font-size: 10pt;
+            color: #555;
+        }
+
+        /* References */
+        .references-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .reference-entry {
+            font-size: 10pt;
+        }
+
+        .reference-entry .ref-name {
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        .reference-entry .ref-title {
+            color: #3498db;
+            font-size: 9.5pt;
+        }
+
+        .reference-entry .ref-contact {
+            color: #666;
+            font-size: 9.5pt;
+        }
+
+        /* Responsive for mobile preview */
+        @media screen and (max-width: 768px) {
+            .cv-container {
+                padding: 15px;
+            }
+
+            .cv-header h1 {
+                font-size: 18pt;
+            }
+
+            .cv-header .contact-info {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .skills-grid,
+            .references-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .entry-header {
+                flex-direction: column;
+            }
+        }
+
+        /* Print styles */
+        @media print {
+            body {
+                font-size: 10pt;
+            }
+
+            .cv-container {
+                padding: 0;
+            }
+
+            .cv-section h2 {
+                color: #2c3e50 !important;
+                border-bottom-color: #2c3e50 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="cv-container">
+
+        <!-- HEADER / PERSONAL INFO -->
+        <div class="cv-header">
+            <h1>{{FULL_NAME}}</h1>
+            <div class="contact-info">
+                {{#PHONE}}<span>📞 {{PHONE}}</span>{{/PHONE}}
+                {{#EMAIL}}<span class="separator">|</span><span>✉️ {{EMAIL}}</span>{{/EMAIL}}
+                {{#LOCATION}}<span class="separator">|</span><span>📍 {{LOCATION}}</span>{{/LOCATION}}
+            </div>
+            {{#DATE_OF_BIRTH}}
+            <div style="font-size: 9pt; color: #888; margin-top: 5px;">
+                Date of Birth: {{DATE_OF_BIRTH}}
+            </div>
+            {{/DATE_OF_BIRTH}}
+        </div>
+
+        <!-- PROFESSIONAL SUMMARY -->
+        {{#SUMMARY}}
+        <div class="cv-section">
+            <h2>Professional Summary</h2>
+            <p class="summary-text">{{SUMMARY}}</p>
+        </div>
+        {{/SUMMARY}}
+
+        <!-- EDUCATION -->
+        {{#EDUCATION}}
+        <div class="cv-section">
+            <h2>Education</h2>
+            {{#EDUCATION_ENTRIES}}
+            <div class="entry">
+                <div class="entry-header">
+                    <span class="entry-title">{{QUALIFICATION}}</span>
+                    <span class="entry-date">{{YEAR_START}} — {{YEAR_END}}</span>
+                </div>
+                <div class="entry-subtitle">{{INSTITUTION}}</div>
+                {{#GRADE}}
+                <div style="font-size: 10pt; color: #666; margin-top: 2px;">Grade: {{GRADE}}</div>
+                {{/GRADE}}
+            </div>
+            {{/EDUCATION_ENTRIES}}
+        </div>
+        {{/EDUCATION}}
+
+        <!-- WORK EXPERIENCE -->
+        {{#EXPERIENCE}}
+        <div class="cv-section">
+            <h2>Work Experience</h2>
+            {{#EXPERIENCE_ENTRIES}}
+            <div class="entry">
+                <div class="entry-header">
+                    <span class="entry-title">{{JOB_TITLE}}</span>
+                    <span class="entry-date">{{DURATION_START}} — {{DURATION_END}}</span>
+                </div>
+                <div class="entry-subtitle">{{COMPANY}}</div>
+                {{#RESPONSIBILITIES}}
+                <ul class="entry-details">
+                    {{#RESPONSIBILITIES_LIST}}
+                    <li>{{.}}</li>
+                    {{/RESPONSIBILITIES_LIST}}
+                </ul>
+                {{/RESPONSIBILITIES}}
+            </div>
+            {{/EXPERIENCE_ENTRIES}}
+        </div>
+        {{/EXPERIENCE}}
+
+        <!-- SKILLS -->
+        {{#SKILLS}}
+        <div class="cv-section">
+            <h2>Skills & Competencies</h2>
+            <div class="skills-grid">
+                {{#TECHNICAL_SKILLS}}
+                <div class="skill-category">
+                    <strong>Technical Skills:</strong><br>
+                    <span>{{TECHNICAL_SKILLS}}</span>
+                </div>
+                {{/TECHNICAL_SKILLS}}
+                {{#LANGUAGES}}
+                <div class="skill-category">
+                    <strong>Languages:</strong><br>
+                    <span>{{LANGUAGES}}</span>
+                </div>
+                {{/LANGUAGES}}
+                {{#SOFT_SKILLS}}
+                <div class="skill-category">
+                    <strong>Soft Skills:</strong><br>
+                    <span>{{SOFT_SKILLS}}</span>
+                </div>
+                {{/SOFT_SKILLS}}
+                {{#CERTIFICATIONS}}
+                <div class="skill-category">
+                    <strong>Certifications:</strong><br>
+                    <span>{{CERTIFICATIONS}}</span>
+                </div>
+                {{/CERTIFICATIONS}}
+            </div>
+        </div>
+        {{/SKILLS}}
+
+        <!-- REFERENCES -->
+        {{#REFERENCES}}
+        <div class="cv-section">
+            <h2>References</h2>
+            {{#REFERENCES_AVAILABLE}}
+            <div class="references-grid">
+                {{#REFERENCES_LIST}}
+                <div class="reference-entry">
+                    <div class="ref-name">{{NAME}}</div>
+                    <div class="ref-title">{{TITLE}}</div>
+                    <div class="ref-contact">📞 {{PHONE}}</div>
+                    {{#EMAIL}}<div class="ref-contact">✉️ {{EMAIL}}</div>{{/EMAIL}}
+                    <div style="font-size: 9pt; color: #888;">{{RELATIONSHIP}}</div>
+                </div>
+                {{/REFERENCES_LIST}}
+            </div>
+            {{/REFERENCES_AVAILABLE}}
+            {{^REFERENCES_AVAILABLE}}
+            <p style="font-size: 10.5pt; color: #666; font-style: italic;">
+                Available upon request
+            </p>
+            {{/REFERENCES_AVAILABLE}}
+        </div>
+        {{/REFERENCES}}
+
+    </div>
+</body>
+</html>

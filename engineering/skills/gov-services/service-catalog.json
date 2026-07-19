@@ -1,0 +1,846 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2026-07-19",
+  "currency": "KES",
+  "services": {
+    "kra": {
+      "name": "Kenya Revenue Authority (KRA)",
+      "name_sw": "Mamlaka ya Mapato ya Kenya (KRA)",
+      "icon": "🏛️",
+      "sub_services": {
+        "pin_registration": {
+          "name": "KRA PIN Registration",
+          "name_sw": "Usajili wa KRA PIN",
+          "fee": 150,
+          "processing_time": "Immediate (online)",
+          "description": "Register for a new KRA PIN number for tax purposes",
+          "description_sw": "Jisajili kwa KRA PIN mpya ya kulipa ushuru",
+          "required_documents": [
+            "National ID or Passport",
+            "Phone number",
+            "Email address (optional)"
+          ],
+          "required_documents_sw": [
+            "Kitambulisho cha Taifa au Passport",
+            "Nambari ya simu",
+            "Barua pepe (si lazima)"
+          ],
+          "fields": [
+            {
+              "name": "full_name",
+              "label": "Full Name (as on ID)",
+              "label_sw": "Jina Kamili (kama kwenye kitambulisho)",
+              "type": "text",
+              "required": true
+            },
+            {
+              "name": "id_number",
+              "label": "National ID Number",
+              "label_sw": "Nambari ya Kitambulisho",
+              "type": "id_number",
+              "pattern": "^\\d{8}$",
+              "example": "12345678",
+              "required": true
+            },
+            {
+              "name": "date_of_birth",
+              "label": "Date of Birth",
+              "label_sw": "Tarehe ya Kuzaliwa",
+              "type": "date",
+              "required": true
+            },
+            {
+              "name": "phone_number",
+              "label": "Phone Number",
+              "label_sw": "Nambari ya Simu",
+              "type": "phone",
+              "pattern": "^0[17]\\d{8}$",
+              "example": "0712345678",
+              "required": true
+            },
+            {
+              "name": "email",
+              "label": "Email Address",
+              "label_sw": "Barua Pepe",
+              "type": "email",
+              "required": false
+            },
+            {
+              "name": "physical_address",
+              "label": "Physical Address",
+              "label_sw": "Anwani ya Makazi",
+              "type": "text",
+              "required": true
+            },
+            {
+              "name": "tax_obligation",
+              "label": "Tax Obligation Type",
+              "label_sw": "Aina ya Ushuru",
+              "type": "select",
+              "options": ["Employment Income", "Business Income", "Rental Income", "Other"],
+              "required": true
+            }
+          ],
+          "steps": [
+            "Go to https://itax.kra.go.ke",
+            "Click 'New PIN Registration'",
+            "Select 'Individual' as taxpayer type",
+            "Fill in your personal details exactly as on your ID",
+            "Upload a copy of your National ID",
+            "Submit the application",
+            "Your KRA PIN will be sent to your phone and email"
+          ],
+          "steps_sw": [
+            "Nenda https://itax.kra.go.ke",
+            "Bofya 'New PIN Registration'",
+            "Chagua 'Individual' kama aina ya mlipa ushuru",
+            "Jaza maelezo yako ya kibinafsi sawa na kwenye kitambulisho chako",
+            "Pakia nakala ya Kitambulisho chako cha Taifa",
+            "Wasilisha ombi lako",
+            "KRA PIN yako itatumwa kwenye simu yako na barua pepe"
+          ]
+        },
+        "pin_retrieval": {
+          "name": "KRA PIN Retrieval",
+          "name_sw": "Kupata KRA PIN Ulilopotea",
+          "fee": 150,
+          "processing_time": "Immediate",
+          "description": "Retrieve your existing KRA PIN number",
+          "description_sw": "Pata nambari yako ya KRA PIN uliyopotea",
+          "required_documents": [
+            "National ID or Passport",
+            "Phone number (as registered)"
+          ],
+          "fields": [
+            {
+              "name": "full_name",
+              "label": "Full Name",
+              "label_sw": "Jina Kamili",
+              "type": "text",
+              "required": true
+            },
+            {
+              "name": "id_number",
+              "label": "National ID Number",
+              "label_sw": "Nambari ya Kitambulisho",
+              "type": "id_number",
+              "pattern": "^\\d{8}$",
+              "required": true
+            },
+            {
+              "name": "phone_number",
+              "label": "Phone Number (as registered)",
+              "label_sw": "Nambari ya Simu (iliyosajiliwa)",
+              "type": "phone",
+              "pattern": "^0[17]\\d{8}$",
+              "required": true
+            }
+          ],
+          "steps": [
+            "Go to https://itax.kra.go.ke",
+            "Click 'Forgot PIN'",
+            "Enter your National ID number",
+            "Verify via OTP sent to your registered phone",
+            "Your KRA PIN will be displayed and sent to your phone"
+          ]
+        },
+        "returns_filing": {
+          "name": "KRA Tax Returns Filing",
+          "name_sw": "Kujaza Ripoti ya Ushuru",
+          "fee": 200,
+          "processing_time": "1-3 business days",
+          "description": "File your annual tax returns with KRA",
+          "description_sw": "Jaza ripoti yako ya ushuru ya mwaka na KRA",
+          "required_documents": [
+            "KRA PIN",
+            "National ID",
+            "P9 Form (for employed)",
+            "Business records (for self-employed)",
+            "Phone number"
+          ],
+          "fields": [
+            {
+              "name": "kra_pin",
+              "label": "KRA PIN",
+              "label_sw": "KRA PIN",
+              "type": "kra_pin",
+              "pattern": "^[A-Z]\\d{9}[A-Z]$",
+              "example": "A123456789B",
+              "required": true
+            },
+            {
+              "name": "id_number",
+              "label": "National ID Number",
+              "label_sw": "Nambari ya Kitambulisho",
+              "type": "id_number",
+              "pattern": "^\\d{8}$",
+              "required": true
+            },
+            {
+              "name": "tax_year",
+              "label": "Tax Year",
+              "label_sw": "Mwaka wa Ushuru",
+              "type": "select",
+              "options": ["2025", "2024", "2023"],
+              "required": true
+            },
+            {
+              "name": "employment_status",
+              "label": "Employment Status",
+              "label_sw": "Hali ya Ajira",
+              "type": "select",
+              "options": ["Employed", "Self-Employed", "Both", "Unemployed"],
+              "required": true
+            },
+            {
+              "name": "gross_income",
+              "label": "Gross Annual Income (KES)",
+              "label_sw": "Mapato ya Mwaka (KES)",
+              "type": "number",
+              "required": true
+            }
+          ]
+        }
+      }
+    },
+    "ecitizen": {
+      "name": "eCitizen Portal",
+      "name_sw": "Tovuti ya eCitizen",
+      "icon": "🇰🇪",
+      "sub_services": {
+        "account_creation": {
+          "name": "eCitizen Account Creation",
+          "name_sw": "Kufungua Akaunti ya eCitizen",
+          "fee": 150,
+          "processing_time": "Immediate",
+          "description": "Create an eCitizen account for government services",
+          "description_sw": "Fungua akaunti ya eCitizen kwa huduma za serikali",
+          "required_documents": [
+            "National ID or Passport",
+            "Phone number",
+            "Email address"
+          ],
+          "fields": [
+            {
+              "name": "full_name",
+              "label": "Full Name",
+              "label_sw": "Jina Kamili",
+              "type": "text",
+              "required": true
+            },
+            {
+              "name": "id_number",
+              "label": "National ID Number",
+              "label_sw": "Nambari ya Kitambulisho",
+              "type": "id_number",
+              "pattern": "^\\d{8}$",
+              "required": true
+            },
+            {
+              "name": "phone_number",
+              "label": "Phone Number",
+              "label_sw": "Nambari ya Simu",
+              "type": "phone",
+              "pattern": "^0[17]\\d{8}$",
+              "required": true
+            },
+            {
+              "name": "email",
+              "label": "Email Address",
+              "label_sw": "Barua Pepe",
+              "type": "email",
+              "required": true
+            }
+          ],
+          "steps": [
+            "Go to https://ecitizen.go.ke",
+            "Click 'Create Account'",
+            "Select 'Kenyan Citizen'",
+            "Enter your National ID number and first name",
+            "Fill in your personal details",
+            "Create a password",
+            "Verify your phone number via OTP",
+            "Your account is now active"
+          ]
+        },
+        "good_conduct": {
+          "name": "Certificate of Good Conduct",
+          "name_sw": "Cheti cha Maadili Mema",
+          "fee": 200,
+          "processing_time": "2-4 weeks",
+          "description": "Apply for a Certificate of Good Conduct from DCI",
+          "description_sw": "Omba Cheti cha Maadili Mema kutoka DCI",
+          "required_documents": [
+            "eCitizen account",
+            "National ID",
+            "Passport photo",
+            "Fingerprints (at DCI office)"
+          ],
+          "fields": [
+            {
+              "name": "full_name",
+              "label": "Full Name",
+              "type": "text",
+              "required": true
+            },
+            {
+              "name": "id_number",
+              "label": "National ID Number",
+              "type": "id_number",
+              "pattern": "^\\d{8}$",
+              "required": true
+            },
+            {
+              "name": "ecitizen_email",
+              "label": "eCitizen Email",
+              "type": "email",
+              "required": true
+            },
+            {
+              "name": "ecitizen_password",
+              "label": "eCitizen Password",
+              "type": "password",
+              "required": true,
+              "sensitive": true
+            }
+          ]
+        },
+        "birth_certificate": {
+          "name": "Birth Certificate Application",
+          "name_sw": "Omba Cheti cha Kuzaliwa",
+          "fee": 200,
+          "processing_time": "1-2 weeks",
+          "description": "Apply for a birth certificate",
+          "description_sw": "Omba cheti cha kuzaliwa",
+          "fields": [
+            {
+              "name": "child_full_name",
+              "label": "Full Name of Child",
+              "type": "text",
+              "required": true
+            },
+            {
+              "name": "date_of_birth",
+              "label": "Date of Birth",
+              "type": "date",
+              "required": true
+            },
+            {
+              "name": "place_of_birth",
+              "label": "Place of Birth",
+              "type": "text",
+              "required": true
+            },
+            {
+              "name": "father_name",
+              "label": "Father's Full Name",
+              "type": "text",
+              "required": true
+            },
+            {
+              "name": "mother_name",
+              "label": "Mother's Full Name",
+              "type": "text",
+              "required": true
+            },
+            {
+              "name": "father_id",
+              "label": "Father's ID Number",
+              "type": "id_number",
+              "pattern": "^\\d{8}$",
+              "required": true
+            },
+            {
+              "name": "mother_id",
+              "label": "Mother's ID Number",
+              "type": "id_number",
+              "pattern": "^\\d{8}$",
+              "required": true
+            }
+          ]
+        }
+      }
+    },
+    "nhif": {
+      "name": "National Hospital Insurance Fund (NHIF)",
+      "name_sw": "Mfuko wa Bima ya Hospitali ya Taifa (NHIF)",
+      "icon": "🏥",
+      "sub_services": {
+        "registration": {
+          "name": "NHIF Registration",
+          "name_sw": "Usajili wa NHIF",
+          "fee": 150,
+          "processing_time": "Immediate",
+          "description": "Register for NHIF health insurance",
+          "description_sw": "Jisajili kwa bima ya afya ya NHIF",
+          "required_documents": [
+            "National ID",
+            "Phone number",
+            "Employer details (if employed)"
+          ],
+          "fields": [
+            {
+              "name": "full_name",
+              "label": "Full Name",
+              "label_sw": "Jina Kamili",
+              "type": "text",
+              "required": true
+            },
+            {
+              "name": "id_number",
+              "label": "National ID Number",
+              "label_sw": "Nambari ya Kitambulisho",
+              "type": "id_number",
+              "pattern": "^\\d{8}$",
+              "required": true
+            },
+            {
+              "name": "date_of_birth",
+              "label": "Date of Birth",
+              "label_sw": "Tarehe ya Kuzaliwa",
+              "type": "date",
+              "required": true
+            },
+            {
+              "name": "phone_number",
+              "label": "Phone Number",
+              "label_sw": "Nambari ya Simu",
+              "type": "phone",
+              "pattern": "^0[17]\\d{8}$",
+              "required": true
+            },
+            {
+              "name": "employment_status",
+              "label": "Employment Status",
+              "label_sw": "Hali ya Ajira",
+              "type": "select",
+              "options": ["Employed", "Self-Employed", "Unemployed"],
+              "required": true
+            },
+            {
+              "name": "employer_name",
+              "label": "Employer Name",
+              "label_sw": "Jina la Mwajiri",
+              "type": "text",
+              "required": false,
+              "conditional": "employment_status == 'Employed'"
+            },
+            {
+              "name": "beneficiary_name",
+              "label": "Beneficiary Name (Spouse/Dependent)",
+              "label_sw": "Jina la Mnufaika (Mwenza/Mtegemezi)",
+              "type": "text",
+              "required": false
+            }
+          ],
+          "steps": [
+            "Go to https://www.nhif.or.ke",
+            "Click 'Self Employed' or 'Employed' registration",
+            "Enter your National ID number",
+            "Fill in personal details",
+            "Upload a passport photo",
+            "Submit application",
+            "You will receive NHIF number via SMS"
+          ]
+        },
+        "card_replacement": {
+          "name": "NHIF Card Replacement",
+          "name_sw": "Kubadilisha Kadi ya NHIF",
+          "fee": 200,
+          "processing_time": "3-5 business days",
+          "description": "Replace a lost or damaged NHIF card",
+          "description_sw": "Badilisha kadi ya NHIF iliyopotea au kuharibika",
+          "fields": [
+            {
+              "name": "full_name",
+              "label": "Full Name",
+              "type": "text",
+              "required": true
+            },
+            {
+              "name": "nhif_number",
+              "label": "NHIF Number",
+              "type": "text",
+              "pattern": "^\\d{8,10}$",
+              "required": true
+            },
+            {
+              "name": "id_number",
+              "label": "National ID Number",
+              "type": "id_number",
+              "pattern": "^\\d{8}$",
+              "required": true
+            },
+            {
+              "name": "phone_number",
+              "label": "Phone Number",
+              "type": "phone",
+              "pattern": "^0[17]\\d{8}$",
+              "required": true
+            }
+          ]
+        },
+        "statement": {
+          "name": "NHIF Contribution Statement",
+          "name_sw": "Ripoti ya Mchango wa NHIF",
+          "fee": 150,
+          "processing_time": "Immediate",
+          "description": "Get your NHIF contribution statement",
+          "description_sw": "Pata ripoti yako ya mchango wa NHIF",
+          "fields": [
+            {
+              "name": "nhif_number",
+              "label": "NHIF Number",
+              "type": "text",
+              "pattern": "^\\d{8,10}$",
+              "required": true
+            },
+            {
+              "name": "id_number",
+              "label": "National ID Number",
+              "type": "id_number",
+              "pattern": "^\\d{8}$",
+              "required": true
+            }
+          ]
+        }
+      }
+    },
+    "nssf": {
+      "name": "National Social Security Fund (NSSF)",
+      "name_sw": "Mfuko wa Hifadhi ya Jamii ya Taifa (NSSF)",
+      "icon": "🏦",
+      "sub_services": {
+        "registration": {
+          "name": "NSSF Registration",
+          "name_sw": "Usajili wa NSSF",
+          "fee": 150,
+          "processing_time": "Immediate",
+          "description": "Register for NSSF social security",
+          "description_sw": "Jisajili kwa hifadhi ya jamii ya NSSF",
+          "required_documents": [
+            "National ID",
+            "Phone number",
+            "Employer details (if employed)"
+          ],
+          "fields": [
+            {
+              "name": "full_name",
+              "label": "Full Name",
+              "label_sw": "Jina Kamili",
+              "type": "text",
+              "required": true
+            },
+            {
+              "name": "id_number",
+              "label": "National ID Number",
+              "label_sw": "Nambari ya Kitambulisho",
+              "type": "id_number",
+              "pattern": "^\\d{8}$",
+              "required": true
+            },
+            {
+              "name": "date_of_birth",
+              "label": "Date of Birth",
+              "label_sw": "Tarehe ya Kuzaliwa",
+              "type": "date",
+              "required": true
+            },
+            {
+              "name": "phone_number",
+              "label": "Phone Number",
+              "label_sw": "Nambari ya Simu",
+              "type": "phone",
+              "pattern": "^0[17]\\d{8}$",
+              "required": true
+            },
+            {
+              "name": "employer_name",
+              "label": "Employer Name",
+              "label_sw": "Jina la Mwajiri",
+              "type": "text",
+              "required": false
+            }
+          ]
+        },
+        "statement": {
+          "name": "NSSF Statement",
+          "name_sw": "Ripoti ya NSSF",
+          "fee": 200,
+          "processing_time": "Immediate",
+          "description": "Get your NSSF contribution statement",
+          "description_sw": "Pata ripoti yako ya mchango wa NSSF",
+          "fields": [
+            {
+              "name": "nssf_number",
+              "label": "NSSF Number",
+              "type": "text",
+              "pattern": "^\\d{8,10}$",
+              "required": true
+            },
+            {
+              "name": "id_number",
+              "label": "National ID Number",
+              "type": "id_number",
+              "pattern": "^\\d{8}$",
+              "required": true
+            }
+          ]
+        }
+      }
+    },
+    "ntsa": {
+      "name": "National Transport and Safety Authority (NTSA)",
+      "name_sw": "Mamlaka ya Usalama na Usafiri wa Taifa (NTSA)",
+      "icon": "🚗",
+      "sub_services": {
+        "driving_license": {
+          "name": "Driving License Application",
+          "name_sw": "Omba Leseni ya Udereva",
+          "fee": 300,
+          "processing_time": "1-2 weeks",
+          "description": "Apply for a new driving license or renewal",
+          "description_sw": "Omba leseni mpya ya udereva au kuisasisha",
+          "required_documents": [
+            "National ID",
+            "Passport photo",
+            "Eye test certificate",
+            "Driving school certificate (for new license)"
+          ],
+          "fields": [
+            {
+              "name": "full_name",
+              "label": "Full Name",
+              "label_sw": "Jina Kamili",
+              "type": "text",
+              "required": true
+            },
+            {
+              "name": "id_number",
+              "label": "National ID Number",
+              "label_sw": "Nambari ya Kitambulisho",
+              "type": "id_number",
+              "pattern": "^\\d{8}$",
+              "required": true
+            },
+            {
+              "name": "date_of_birth",
+              "label": "Date of Birth",
+              "label_sw": "Tarehe ya Kuzaliwa",
+              "type": "date",
+              "required": true
+            },
+            {
+              "name": "phone_number",
+              "label": "Phone Number",
+              "label_sw": "Nambari ya Simu",
+              "type": "phone",
+              "pattern": "^0[17]\\d{8}$",
+              "required": true
+            },
+            {
+              "name": "license_class",
+              "label": "License Class",
+              "label_sw": "Aina ya Leseni",
+              "type": "select",
+              "options": ["A (Motorcycle)", "B (Private Car)", "C (Commercial)", "D (Public Service)", "E (Heavy Vehicle)"],
+              "required": true
+            },
+            {
+              "name": "application_type",
+              "label": "Application Type",
+              "label_sw": "Aina ya Ombi",
+              "type": "select",
+              "options": ["New", "Renewal", "Replacement"],
+              "required": true
+            },
+            {
+              "name": "previous_license_no",
+              "label": "Previous License Number (if renewal/replacement)",
+              "label_sw": "Nambari ya Leseni ya Awali (kama unasisa/kubadilisha)",
+              "type": "text",
+              "required": false
+            }
+          ]
+        },
+        "logbook_transfer": {
+          "name": "Logbook Transfer",
+          "name_sw": "Kuhamisha Kitabu cha Gari",
+          "fee": 300,
+          "processing_time": "2-4 weeks",
+          "description": "Transfer vehicle ownership (logbook)",
+          "description_sw": "Hamisha umiliki wa gari (kitabu)",
+          "fields": [
+            {
+              "name": "seller_name",
+              "label": "Seller's Full Name",
+              "type": "text",
+              "required": true
+            },
+            {
+              "name": "seller_id",
+              "label": "Seller's ID Number",
+              "type": "id_number",
+              "pattern": "^\\d{8}$",
+              "required": true
+            },
+            {
+              "name": "buyer_name",
+              "label": "Buyer's Full Name",
+              "type": "text",
+              "required": true
+            },
+            {
+              "name": "buyer_id",
+              "label": "Buyer's ID Number",
+              "type": "id_number",
+              "pattern": "^\\d{8}$",
+              "required": true
+            },
+            {
+              "name": "vehicle_registration",
+              "label": "Vehicle Registration Number",
+              "type": "text",
+              "example": "KBA 123A",
+              "required": true
+            },
+            {
+              "name": "vehicle_make",
+              "label": "Vehicle Make/Model",
+              "type": "text",
+              "required": true
+            },
+            {
+              "name": "logbook_number",
+              "label": "Logbook Number",
+              "type": "text",
+              "required": true
+            }
+          ]
+        }
+      }
+    },
+    "helb": {
+      "name": "Higher Education Loans Board (HELB)",
+      "name_sw": "Bodi ya Mikopo ya Elimu ya Juu (HELB)",
+      "icon": "🎓",
+      "sub_services": {
+        "application": {
+          "name": "HELB Loan Application",
+          "name_sw": "Omba Mkopo wa HELB",
+          "fee": 200,
+          "processing_time": "4-8 weeks",
+          "description": "Apply for a HELB student loan",
+          "description_sw": "Omba mkopo wa wanafunzi wa HELB",
+          "required_documents": [
+            "National ID",
+            "University admission letter",
+            "KCSE certificate",
+            "Parent/Guardian ID",
+            "Phone number"
+          ],
+          "fields": [
+            {
+              "name": "full_name",
+              "label": "Full Name",
+              "label_sw": "Jina Kamili",
+              "type": "text",
+              "required": true
+            },
+            {
+              "name": "id_number",
+              "label": "National ID Number",
+              "label_sw": "Nambari ya Kitambulisho",
+              "type": "id_number",
+              "pattern": "^\\d{8}$",
+              "required": true
+            },
+            {
+              "name": "phone_number",
+              "label": "Phone Number",
+              "label_sw": "Nambari ya Simu",
+              "type": "phone",
+              "pattern": "^0[17]\\d{8}$",
+              "required": true
+            },
+            {
+              "name": "university",
+              "label": "University Name",
+              "label_sw": "Jina la Chuo Kikuu",
+              "type": "text",
+              "required": true
+            },
+            {
+              "name": "course",
+              "label": "Course/Program",
+              "label_sw": "Kozi/Programu",
+              "type": "text",
+              "required": true
+            },
+            {
+              "name": "admission_number",
+              "label": "University Admission Number",
+              "label_sw": "Nambari ya Kujiunga",
+              "type": "text",
+              "required": true
+            },
+            {
+              "name": "year_of_study",
+              "label": "Year of Study",
+              "label_sw": "Mwaka wa Masomo",
+              "type": "select",
+              "options": ["1", "2", "3", "4", "5", "6"],
+              "required": true
+            },
+            {
+              "name": "parent_name",
+              "label": "Parent/Guardian Name",
+              "label_sw": "Jina la Mzazi/Mlezi",
+              "type": "text",
+              "required": true
+            },
+            {
+              "name": "parent_id",
+              "label": "Parent/Guardian ID Number",
+              "label_sw": "Nambari ya Kitambulisho cha Mzazi/Mlezi",
+              "type": "id_number",
+              "pattern": "^\\d{8}$",
+              "required": true
+            },
+            {
+              "name": "parent_phone",
+              "label": "Parent/Guardian Phone",
+              "label_sw": "Nambari ya Simu ya Mzazi/Mlezi",
+              "type": "phone",
+              "pattern": "^0[17]\\d{8}$",
+              "required": true
+            }
+          ]
+        },
+        "statement": {
+          "name": "HELB Loan Statement",
+          "name_sw": "Ripoti ya Mkopo wa HELB",
+          "fee": 150,
+          "processing_time": "Immediate",
+          "description": "Check your HELB loan balance and repayment status",
+          "description_sw": "Angalia salio la mkopo wako wa HELB na hali ya kulipa",
+          "fields": [
+            {
+              "name": "helb_number",
+              "label": "HELB Account Number",
+              "type": "text",
+              "required": true
+            },
+            {
+              "name": "id_number",
+              "label": "National ID Number",
+              "type": "id_number",
+              "pattern": "^\\d{8}$",
+              "required": true
+            }
+          ]
+        }
+      }
+    }
+  }
+}

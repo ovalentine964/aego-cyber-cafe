@@ -1,0 +1,70 @@
+# M-Pesa Daraja API Configuration
+# Aego Cyber Cafe
+
+# Environment: sandbox or production
+environment: sandbox
+
+# Sandbox credentials (replace with production when ready)
+sandbox:
+  consumer_key: "YOUR_SANDBOX_CONSUMER_KEY"
+  consumer_secret: "YOUR_SANDBOX_CONSUMER_SECRET"
+  shortcode: "174379"
+  passkey: "YOUR_SANDBOX_PASSKEY"
+  callback_url: "https://your-domain.com/api/mpesa/callback"
+  confirmation_url: "https://your-domain.com/api/mpesa/confirmation"
+  validation_url: "https://your-domain.com/api/mpesa/validation"
+  initiator_password: "YOUR_SANDBOX_INITIATOR_PASSWORD"
+  security_credential: "YOUR_SANDBOX_SECURITY_CREDENTIAL"
+
+# Production credentials (fill when going live)
+production:
+  consumer_key: "YOUR_PRODUCTION_CONSUMER_KEY"
+  consumer_secret: "YOUR_PRODUCTION_CONSUMER_SECRET"
+  shortcode: "YOUR_PRODUCTION_SHORTCODE"
+  passkey: "YOUR_PRODUCTION_PASSKEY"
+  callback_url: "https://your-domain.com/api/mpesa/callback"
+  confirmation_url: "https://your-domain.com/api/mpesa/confirmation"
+  validation_url: "https://your-domain.com/api/mpesa/validation"
+  initiator_password: "YOUR_PRODUCTION_INITIATOR_PASSWORD"
+  security_credential: "YOUR_PRODUCTION_SECURITY_CREDENTIAL"
+
+# API endpoints
+endpoints:
+  sandbox:
+    base_url: "https://sandbox.safaricom.co.ke"
+    oauth: "/oauth/v1/generate?grant_type=client_credentials"
+    stk_push: "/mpesa/stkpush/v1/processrequest"
+    stk_query: "/mpesa/stkpushquery/v1/query"
+    b2c: "/mpesa/b2c/v1/paymentrequest"
+    transaction_status: "/mpesa/transactionstatus/v1/query"
+    account_balance: "/mpesa/accountbalance/v1/query"
+    reversal: "/mpesa/reversal/v1/request"
+  production:
+    base_url: "https://api.safaricom.co.ke"
+    oauth: "/oauth/v1/generate?grant_type=client_credentials"
+    stk_push: "/mpesa/stkpush/v1/processrequest"
+    stk_query: "/mpesa/stkpushquery/v1/query"
+    b2c: "/mpesa/b2c/v1/paymentrequest"
+    transaction_status: "/mpesa/transactionstatus/v1/query"
+    account_balance: "/mpesa/accountbalance/v1/query"
+    reversal: "/mpesa/reversal/v1/request"
+
+# Timeouts
+timeouts:
+  connection: 30  # seconds
+  stk_push_wait: 60  # seconds to wait for STK push callback
+  stk_query_delay: 10  # seconds before querying STK status
+  b2c_timeout: 60  # seconds for B2C processing
+
+# Retry settings
+retry:
+  max_attempts: 3
+  delay_seconds: 5
+  backoff_multiplier: 2
+
+# Logging
+logging:
+  level: INFO
+  file: /opt/aego/logs/mpesa.log
+  max_size_mb: 10
+  backup_count: 5

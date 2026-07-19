@@ -1,0 +1,122 @@
+# ============================================================================
+# Aego Cyber Cafe — Docker Compose (Optional)
+# For running n8n + Ollama in containers
+# ============================================================================
+# Usage:
+#   docker compose up -d          # Start all services
+#   docker compose logs -f        # View logs
+#   docker compose down           # Stop all services
+#   docker compose pull           # Update images
+# ============================================================================
+
+version: "3.8"
+
+services:
+  # ---------------------------------------------------------------------------
+  # Ollama — Local AI Model Server
+  # ---------------------------------------------------------------------------
+  ollama:
+    image: ollama/ollama:latest
+    container_name: aego-ollama
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_models:/root/.ollama/models
+      - /opt/aego/models:/opt/aego/models:ro
+    environment:
+      - OLLAMA_HOST=0.0.0.0
+      - OLLAMA_KEEP_ALIVE=24h
+      - OLLAMA_NUM_PARALLEL=2
+      - OLLAMA_MAX_LOADED_MODELS=2
+    # GPU passthrough (if available on Pi with external GPU, or for x86 hosts)
+    # Uncomment the following for NVIDIA GPU:
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    networks:
+      - aego-net
+
+  # ---------------------------------------------------------------------------
+  # n8n — Workflow Automation
+  # ---------------------------------------------------------------------------
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: aego-n8n
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    volumes:
+      - n8n_data:/home/node/.n8n
+      - /opt/aego/data/n8n:/opt/aego/data/n8n
+    environment:
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - N8N_LISTEN_ADDRESS=0.0.0.0
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=admin
+      - N8N_BASIC_AUTH_PASSWORD=changeme-aego-2024
+      - DB_TYPE=sqlite
+      - DB_SQLITE_DATABASE=/home/node/.n8n/database.sqlite
+      - GENERIC_TIMEZONE=Africa/Nairobi
+      - TZ=Africa/Nairobi
+      # Connect to Ollama via Docker network
+      - OLLAMA_BASE_URL=http://ollama:11434
+    depends_on:
+      ollama:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5678/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    networks:
+      - aego-net
+
+  # ---------------------------------------------------------------------------
+  # Portainer (Optional) — Docker Management UI
+  # ---------------------------------------------------------------------------
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: aego-portainer
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    networks:
+      - aego-net
+
+# ---------------------------------------------------------------------------
+# Volumes
+# ---------------------------------------------------------------------------
+volumes:
+  ollama_models:
+    driver: local
+  n8n_data:
+    driver: local
+  portainer_data:
+    driver: local
+
+# ---------------------------------------------------------------------------
+# Networks
+# ---------------------------------------------------------------------------
+networks:
+  aego-net:
+    driver: bridge
+    name: aego-network
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

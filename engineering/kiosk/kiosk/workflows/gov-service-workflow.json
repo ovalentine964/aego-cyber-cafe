@@ -1,0 +1,119 @@
+{
+  "name": "Aego — Government Services Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "gov-service",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "trigger-gov",
+      "name": "Gov Service Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "const body = items[0].json.body || items[0].json;\nconst serviceType = body.service || 'unknown';\nconst fields = body.fields || {};\n\n// Service pricing\nconst pricing = {\n  kra: 100,\n  ecitizen: 150,\n  nhif: 100,\n  nssf: 100,\n  goodconduct: 200,\n  birth: 100\n};\n\n// Required fields validation\nconst requiredFields = {\n  kra: ['kra_name', 'kra_id', 'kra_dob'],\n  ecitizen: ['ec_name', 'ec_id', 'ec_service'],\n  nhif: ['nhif_name', 'nhif_id', 'nhif_phone'],\n  nssf: ['nssf_name', 'nssf_id', 'nssf_phone'],\n  goodconduct: ['gc_name', 'gc_id', 'gc_dob'],\n  birth: ['bc_child', 'bc_dob', 'bc_father', 'bc_mother']\n};\n\nconst required = requiredFields[serviceType] || [];\nconst missing = required.filter(f => !fields[f] || fields[f].trim() === '');\n\nreturn [{\n  json: {\n    service_type: serviceType,\n    fields: fields,\n    amount: pricing[serviceType] || 100,\n    missing_fields: missing,\n    is_valid: missing.length === 0,\n    source: body.source || 'kiosk',\n    session_id: body.session_id || 'unknown',\n    timestamp: new Date().toISOString()\n  }\n}];"
+      },
+      "id": "parse-gov",
+      "name": "Parse Gov Request",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [470, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            { "value1": "={{$json.is_valid}}", "value2": true }
+          ]
+        }
+      },
+      "id": "validate-fields",
+      "name": "Valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [690, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ error: 'Missing required fields', missing: $json.missing_fields }) }}"
+      },
+      "id": "respond-error",
+      "name": "Return Validation Error",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [910, 200]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-mini",
+        "messages": {
+          "values": [
+            {
+              "content": "You are a government services assistant at Aego Cyber Cafe in Nyatike, Migori County, Kenya. Help prepare the following government service application.\n\nService: {{$json.service_type}}\nFields: {{JSON.stringify($json.fields)}}\n\nGenerate a filled-in application form or summary document in plain text format suitable for printing. Include:\n1. All provided information formatted correctly\n2. Any additional steps the customer needs to take\n3. Documents they need to bring\n4. Expected processing time\n5. Next steps\n\nMake it professional and clear."
+            }
+          ]
+        },
+        "options": { "temperature": 0.3 }
+      },
+      "id": "ai-process-gov",
+      "name": "AI Process Application",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1,
+      "position": [1130, 400]
+    },
+    {
+      "parameters": {
+        "functionCode": "const aiResult = items[0].json.choices?.[0]?.message?.content || '';\nconst requestData = $('Parse Gov Request').first().json;\n\nreturn [{\n  json: {\n    result: aiResult,\n    service_type: requestData.service_type,\n    customer_name: requestData.fields[requestData.service_type + '_name'] || requestData.fields.ec_name || requestData.fields.gc_name || requestData.fields.bc_child || 'Walk-in',\n    phone: requestData.fields[requestData.service_type + '_phone'] || '',\n    amount: requestData.amount,\n    status: 'pending_approval',\n    session_id: requestData.session_id,\n    source: requestData.source,\n    created_at: new Date().toISOString()\n  }\n}];"
+      },
+      "id": "prepare-gov-result",
+      "name": "Prepare Result",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [1350, 400]
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "table": "requests",
+        "columns": "customer_name, phone, service_type, amount, status, details, session_id, source, created_at"
+      },
+      "id": "save-gov-db",
+      "name": "Save to Database",
+      "type": "n8n-nodes-base.sqlite",
+      "typeVersion": 1,
+      "position": [1570, 400]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ success: true, result: $('Prepare Result').first().json.result, id: $json.id || $json.lastID }) }}"
+      },
+      "id": "respond-gov-success",
+      "name": "Return Success",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1790, 400]
+    }
+  ],
+  "connections": {
+    "Gov Service Trigger": { "main": [[{ "node": "Parse Gov Request", "type": "main", "index": 0 }]] },
+    "Parse Gov Request": { "main": [[{ "node": "Valid?", "type": "main", "index": 0 }]] },
+    "Valid?": {
+      "main": [
+        [{ "node": "AI Process Application", "type": "main", "index": 0 }],
+        [{ "node": "Return Validation Error", "type": "main", "index": 0 }]
+      ]
+    },
+    "AI Process Application": { "main": [[{ "node": "Prepare Result", "type": "main", "index": 0 }]] },
+    "Prepare Result": { "main": [[{ "node": "Save to Database", "type": "main", "index": 0 }]] },
+    "Save to Database": { "main": [[{ "node": "Return Success", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "tags": [{ "name": "aego" }, { "name": "government" }]
+}

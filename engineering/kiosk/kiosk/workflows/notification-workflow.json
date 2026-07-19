@@ -1,0 +1,107 @@
+{
+  "name": "Aego — Customer Notification Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "notify-customer",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "trigger-notify",
+      "name": "Notification Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "const body = items[0].json.body || items[0].json;\n\nconst notification = {\n  type: body.type || 'general',\n  phone: body.phone || '',\n  customer_name: body.customer_name || 'Customer',\n  service: body.service || '',\n  amount: body.amount || 0,\n  receipt: body.receipt || body.mpesa_receipt || '',\n  tracking_id: body.tracking_id || body.id || '',\n  message: body.message || '',\n  status: body.status || 'completed',\n  lang: body.lang || 'en',\n  timestamp: new Date().toISOString()\n};\n\nreturn [{ json: notification }];"
+      },
+      "id": "parse-notification",
+      "name": "Parse Notification",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [470, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "const n = items[0].json;\nlet message = '';\n\nconst templates = {\n  en: {\n    payment_confirmed: `✅ Payment Confirmed!\n\nHi ${n.customer_name},\nYour payment of KES ${n.amount} has been received.\nM-Pesa Ref: ${n.receipt}\nService: ${n.service}\nTracking #: ${n.tracking_id}\n\nThank you for choosing Aego Cyber Cafe!\n📍 Nyatike, Migori County`,\n\n    service_ready: `📄 Your Document is Ready!\n\nHi ${n.customer_name},\nYour ${n.service} is ready for collection.\nTracking #: ${n.tracking_id}\n\nPlease visit Aego Cyber Cafe to collect it.\n📍 Nyatike, Migori County`,\n\n    request_received: `📋 Request Received!\n\nHi ${n.customer_name},\nWe've received your ${n.service} request.\nTracking #: ${n.tracking_id}\n\nWe'll notify you when it's ready.\nThank you for your patience!`,\n\n    general: n.message || 'Update from Aego Cyber Cafe'\n  },\n  sw: {\n    payment_confirmed: `✅ Malipo Yamethibitishwa!\n\nHabari ${n.customer_name},\nMalipo yako ya KES ${n.amount} yamepokelewa.\nMarejeo ya M-Pesa: ${n.receipt}\nHuduma: ${n.service}\nNambari ya Ufuatiliaji: ${n.tracking_id}\n\nAsante kwa kuchagua Aego Cyber Cafe!\n📍 Nyatike, Kaunti ya Migori`,\n\n    service_ready: `📄 Hati Yako ni Tayari!\n\nHabari ${n.customer_name},\n${n.service} yako ni tayari kwa kuchukuliwa.\nNambari ya Ufuatiliaji: ${n.tracking_id}\n\nTafadhali tembelea Aego Cyber Cafe.\n📍 Nyatike, Kaunti ya Migori`,\n\n    request_received: `📋 Ombi Limepokelewa!\n\nHabari ${n.customer_name},\nTumepokea ombi lako la ${n.service}.\nNambari ya Ufuatiliaji: ${n.tracking_id}\n\nTutakujulisha itakapokuwa tayari.`,\n\n    general: n.message || 'Sasisha kutoka Aego Cyber Cafe'\n  },\n  lu: {\n    payment_confirmed: `✅ Chul Osechulwo!\n\nMaber ${n.customer_name},\nChul mar ng'eno KES ${n.amount} ng'eyo gi.\nM-Pesa Ref: ${n.receipt}\nTich: ${n.service}\nTracking #: ${n.tracking_id}\n\nAwuono ni wach Aego Cyber Cafe!\n📍 Nyatike, Migori`,\n\n    service_ready: `📄 Koro Gi Miyo!\n\nMaber ${n.customer_name},\n${n.service} mar gi en koro.\nTracking #: ${n.tracking_id}\n\nKet Aego Cyber Cafe ka in.\n📍 Nyatike, Migori`,\n\n    request_received: `📋 Yien Ng'eyo!\n\nMaber ${n.customer_name},\nYien mar ${n.service} ng'eyo.\nTracking #: ${n.tracking_id}\n\nWa biro nyis ka koro.`,\n\n    general: n.message || 'Update from Aego Cyber Cafe'\n  }\n};\n\nconst langTemplates = templates[n.lang] || templates.en;\nmessage = langTemplates[n.type] || langTemplates.general || n.message;\n\nreturn [{ json: { ...n, formatted_message: message, phone: n.phone } }];"
+      },
+      "id": "format-message",
+      "name": "Format Message",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [690, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            { "value1": "={{$json.phone}}", "operation": "isNotEmpty" }
+          ]
+        }
+      },
+      "id": "has-phone",
+      "name": "Has Phone?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [910, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.OPENCLAW_GATEWAY_URL}}/api/whatsapp/send",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            { "name": "phone", "value": "={{$json.phone}}" },
+            { "name": "message", "value": "={{$json.formatted_message}}" }
+          ]
+        }
+      },
+      "id": "send-whatsapp",
+      "name": "Send WhatsApp",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [1130, 200]
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "table": "notifications",
+        "columns": "phone, type, message, status, sent_at"
+      },
+      "id": "log-notification",
+      "name": "Log Notification",
+      "type": "n8n-nodes-base.sqlite",
+      "typeVersion": 1,
+      "position": [1350, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "return [{ json: { success: true, message: 'Notification sent' } }];"
+      },
+      "id": "respond-notify",
+      "name": "Respond",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [1570, 300]
+    }
+  ],
+  "connections": {
+    "Notification Trigger": { "main": [[{ "node": "Parse Notification", "type": "main", "index": 0 }]] },
+    "Parse Notification": { "main": [[{ "node": "Format Message", "type": "main", "index": 0 }]] },
+    "Format Message": { "main": [[{ "node": "Has Phone?", "type": "main", "index": 0 }]] },
+    "Has Phone?": {
+      "main": [
+        [{ "node": "Send WhatsApp", "type": "main", "index": 0 }],
+        [{ "node": "Log Notification", "type": "main", "index": 0 }]
+      ]
+    },
+    "Send WhatsApp": { "main": [[{ "node": "Log Notification", "type": "main", "index": 0 }]] },
+    "Log Notification": { "main": [[{ "node": "Respond", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "tags": [{ "name": "aego" }, { "name": "notification" }, { "name": "whatsapp" }]
+}

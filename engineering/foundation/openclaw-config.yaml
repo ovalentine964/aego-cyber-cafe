@@ -1,0 +1,176 @@
+# ============================================================================
+# Aego Cyber Cafe — OpenClaw Gateway Configuration
+# Location: Nyatike, Migori County, Kenya
+# ============================================================================
+# Copy this file to: ~/.openclaw/config.yaml
+# Then run: openclaw gateway start
+# ============================================================================
+
+# ---------------------------------------------------------------------------
+# Gateway Settings
+# ---------------------------------------------------------------------------
+gateway:
+  name: "Aego Cyber Cafe AI"
+  port: 3000
+  host: "0.0.0.0"
+  logLevel: "info"
+
+# ---------------------------------------------------------------------------
+# Model Providers
+# ---------------------------------------------------------------------------
+providers:
+  ollama:
+    type: "ollama"
+    baseUrl: "http://localhost:11434"
+    models:
+      primary:
+        id: "gemma4:4b"
+        displayName: "Gemma 4 E4B (Primary)"
+        capabilities: ["text", "vision", "voice"]
+        contextWindow: 32768
+        maxOutput: 8192
+      fallback:
+        id: "qwen3.5:3b"
+        displayName: "Qwen 3.5-3B (Multilingual)"
+        capabilities: ["text"]
+        contextWindow: 32768
+        maxOutput: 8192
+        note: "201 languages — use for non-English queries"
+
+  # Cloud fallback when internet is available
+  google:
+    type: "google"
+    model: "gemini-2.5-flash"
+    apiKey: "${GOOGLE_API_KEY}"  # Set in environment or .env file
+    fallbackOnly: true
+    note: "Only used when Ollama is down or task exceeds local model capability"
+
+# ---------------------------------------------------------------------------
+# Model Routing
+# ---------------------------------------------------------------------------
+routing:
+  default: "ollama:gemma4:4b"
+  fallback: "ollama:qwen3.5:3b"
+  cloudFallback: "google:gemini-2.5-flash"
+
+  # Route non-English text to Qwen automatically
+  languageRouting:
+    enabled: true
+    nonEnglishModel: "ollama:qwen3.5:3b"
+    languages:
+      sw: "ollama:qwen3.5:3b"  # Swahili
+      luo: "ollama:qwen3.5:3b" # Luo (local language)
+      ke: "ollama:qwen3.5:3b"  # Kenyan languages
+
+# ---------------------------------------------------------------------------
+# Channels (Messaging Bridges)
+# ---------------------------------------------------------------------------
+channels:
+  whatsapp:
+    enabled: true
+    type: "whatsapp"
+    # WhatsApp Web bridge — scan QR code to pair
+    # Run: openclaw channel whatsapp setup
+    sessionPath: "/opt/aego/data/whatsapp-session"
+    groupPolicy: "open"         # Respond in groups when mentioned
+    directPolicy: "always"      # Always respond to DMs
+
+  telegram:
+    enabled: true
+    type: "telegram"
+    botToken: "${TELEGRAM_BOT_TOKEN}"  # Get from @BotFather
+    allowedUsers: []             # Empty = allow all (public cafe)
+    groupPolicy: "mention"       # Only respond when @mentioned
+
+# ---------------------------------------------------------------------------
+# Voice Pipeline (TTS + STT)
+# ---------------------------------------------------------------------------
+voice:
+  tts:
+    engine: "piper"
+    binaryPath: "/usr/local/bin/piper"
+    modelPath: "/opt/aego/models/piper/sw_ke-siwi-medium.onnx"
+    defaultLanguage: "sw"       # Swahili
+    speed: 1.0
+    sampleRate: 22050
+    outputPath: "/opt/aego/data/tts-output/"
+
+  stt:
+    engine: "whisper"
+    binaryPath: "/opt/aego/whisper.cpp/build/bin/whisper-cli"
+    modelPath: "/opt/aego/whisper.cpp/models/ggml-tiny.bin"
+    language: "sw"              # Swahili
+    fallbackLanguage: "en"      # English fallback
+    maxDuration: 30             # Max seconds of audio to process
+
+# ---------------------------------------------------------------------------
+# Skills & Data Directories
+# ---------------------------------------------------------------------------
+paths:
+  skills: "/opt/aego/skills/"
+  data: "/opt/aego/data/"
+  logs: "/opt/aego/logs/"
+  models: "/opt/aego/models/"
+
+# ---------------------------------------------------------------------------
+# Cron Jobs
+# ---------------------------------------------------------------------------
+cron:
+  enabled: true
+  jobs:
+    - name: "daily-backup"
+      schedule: "0 2 * * *"     # 2:00 AM daily
+      command: "/opt/aego/backup.sh"
+      description: "Daily backup of databases and config"
+
+    - name: "health-check"
+      schedule: "*/15 * * * *"  # Every 15 minutes
+      command: "/opt/aego/health-check.sh"
+      description: "System health monitoring"
+
+    - name: "log-cleanup"
+      schedule: "0 3 * * 0"     # 3:00 AM every Sunday
+      command: "find /opt/aego/logs -name '*.log' -mtime +30 -delete"
+      description: "Clean up logs older than 30 days"
+
+# ---------------------------------------------------------------------------
+# Security
+# ---------------------------------------------------------------------------
+security:
+  rateLimit:
+    enabled: true
+    maxRequestsPerMinute: 30    # Prevent abuse in public cafe setting
+    maxRequestsPerHour: 200
+
+  contentFilter:
+    enabled: true
+    blockExplicit: true         # Family-friendly cafe environment
+
+  sessionTimeout: 3600          # 1 hour idle timeout
+
+# ---------------------------------------------------------------------------
+# n8n Integration
+# ---------------------------------------------------------------------------
+n8n:
+  enabled: true
+  baseUrl: "http://localhost:5678"
+  webhookPath: "/webhook/aego"
+  note: "Use n8n for complex workflows: appointment booking, SMS, payments"
+
+# ---------------------------------------------------------------------------
+# SQLite Storage
+# ---------------------------------------------------------------------------
+storage:
+  type: "sqlite"
+  databasePath: "/opt/aego/data/sqlite/aego.db"
+  backupPath: "/opt/aego/data/backups/"
+
+# ---------------------------------------------------------------------------
+# Locale & Regional Settings
+# ---------------------------------------------------------------------------
+locale:
+  timezone: "Africa/Nairobi"
+  currency: "KES"
+  country: "KE"
+  languages: ["sw", "en", "luo"]
+  dateFormat: "DD/MM/YYYY"

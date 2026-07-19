@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#1B5E20">
+  <title>Aego Cyber Cafe — AI Services</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Kiosk-specific overrides */
+    body {
+      overscroll-behavior: none;
+      touch-action: manipulation;
+    }
+    .kiosk-logo {
+      width: 100px;
+      height: 100px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      margin: 0 auto 16px;
+    }
+    .service-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 16px;
+      padding: 16px 0;
+    }
+    .quick-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 24px;
+    }
+    .clock {
+      font-size: 1rem;
+      opacity: 0.8;
+      text-align: center;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Offline Banner -->
+  <div id="offlineBanner" class="offline-banner">
+    ⚡ No internet — some services unavailable
+  </div>
+
+  <!-- ===== IDLE / WELCOME SCREEN ===== -->
+  <div id="idleScreen" class="idle-screen">
+    <div class="kiosk-logo">🌐</div>
+    <h1>Aego Cyber Cafe</h1>
+    <p class="subtitle">AI-Powered Services — Nyatike, Migori</p>
+
+    <!-- Language Selector -->
+    <div class="lang-selector" id="langSelector">
+      <button class="lang-btn active" data-lang="en" onclick="setLanguage('en')">English</button>
+      <button class="lang-btn" data-lang="sw" onclick="setLanguage('sw')">Kiswahili</button>
+      <button class="lang-btn" data-lang="lu" onclick="setLanguage('lu')">Dholuo</button>
+    </div>
+
+    <p class="tap-hint" id="tapHint">👆 Tap anywhere to start</p>
+    <div class="clock" id="clock"></div>
+  </div>
+
+  <!-- ===== SERVICE SELECTION SCREEN ===== -->
+  <div id="serviceScreen" class="container hidden" style="padding-top: 16px; padding-bottom: 100px;">
+
+    <!-- Header -->
+    <div class="flex-between mb-2">
+      <h2 id="selectServiceTitle">Choose a Service</h2>
+      <button class="btn btn-ghost btn-sm" onclick="goHome()">🏠 Home</button>
+    </div>
+
+    <!-- Language Selector (compact) -->
+    <div class="lang-selector mb-2" id="langSelectorCompact">
+      <button class="lang-btn active" data-lang="en" onclick="setLanguage('en')">EN</button>
+      <button class="lang-btn" data-lang="sw" onclick="setLanguage('sw')">SW</button>
+      <button class="lang-btn" data-lang="lu" onclick="setLanguage('lu')">LUO</button>
+    </div>
+
+    <!-- Service Grid -->
+    <div class="service-grid" id="serviceGrid">
+
+      <button class="btn btn-service" onclick="selectService('cv')">
+        <span class="icon">📄</span>
+        <span class="label" data-i18n="svc_cv">CV Writing</span>
+        <span class="price">KES 100</span>
+      </button>
+
+      <button class="btn btn-service" onclick="selectService('gov')">
+        <span class="icon">🏛️</span>
+        <span class="label" data-i18n="svc_gov">Gov Services</span>
+        <span class="price">KES 50–200</span>
+      </button>
+
+      <button class="btn btn-service" onclick="selectService('translate')">
+        <span class="icon">🌍</span>
+        <span class="label" data-i18n="svc_translate">Translation</span>
+        <span class="price">KES 50</span>
+      </button>
+
+      <button class="btn btn-service" onclick="selectService('print')">
+        <span class="icon">🖨️</span>
+        <span class="label" data-i18n="svc_print">Printing</span>
+        <span class="price">KES 10/pg</span>
+      </button>
+
+      <button class="btn btn-service" onclick="selectService('data')">
+        <span class="icon">📶</span>
+        <span class="label" data-i18n="svc_data">Data Bundles</span>
+        <span class="price">KES 50+</span>
+      </button>
+
+      <button class="btn btn-service" onclick="selectService('typing')">
+        <span class="icon">⌨️</span>
+        <span class="label" data-i18n="svc_typing">Typing / Forms</span>
+        <span class="price">KES 30</span>
+      </button>
+
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+      <button class="btn btn-outline btn-sm" onclick="selectService('help')">
+        ❓ <span data-i18n="need_help">Need Help?</span>
+      </button>
+      <button class="btn btn-outline btn-sm" onclick="showAdmin()">
+        🔑 Staff Login
+      </button>
+    </div>
+
+    <!-- Status Bar -->
+    <div class="bottom-bar">
+      <div class="flex gap-sm">
+        <span class="status status-ready"><span class="status-dot"></span> <span id="statusText">System Ready</span></span>
+      </div>
+      <button class="btn btn-accent btn-sm" onclick="goHome()">🏠 Home</button>
+    </div>
+  </div>
+
+  <!-- ===== ADMIN LOGIN MODAL ===== -->
+  <div id="adminModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:500;display:flex;align-items:center;justify-content:center;">
+    <div class="card" style="max-width:360px;width:100%;margin:16px;">
+      <h3 class="mb-2">🔑 Staff Login</h3>
+      <form onsubmit="adminLogin(event)">
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input type="password" id="adminPassword" class="form-input" placeholder="Enter staff password" autocomplete="off">
+        </div>
+        <div class="flex gap-sm">
+          <button type="submit" class="btn btn-primary" style="flex:1">Login</button>
+          <button type="button" class="btn btn-ghost" onclick="closeAdminModal()">Cancel</button>
+        </div>
+        <p id="adminError" class="text-sm mt-1 hidden" style="color:var(--error);">Wrong password</p>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <script src="app.js"></script>
+  <script>
+    // === IDLE SCREEN LOGIC ===
+    const idleScreen = document.getElementById('idleScreen');
+    const serviceScreen = document.getElementById('serviceScreen');
+
+    // Tap to start
+    idleScreen.addEventListener('click', () => {
+      idleScreen.classList.add('hidden');
+      serviceScreen.classList.remove('hidden');
+    });
+
+    // Clock
+    function updateClock() {
+      const now = new Date();
+      const el = document.getElementById('clock');
+      if (el) {
+        el.textContent = now.toLocaleTimeString('en-KE', { hour: '2-digit', minute: '2-digit' }) +
+          ' — ' + now.toLocaleDateString('en-KE', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+      }
+    }
+    updateClock();
+    setInterval(updateClock, 30000);
+
+    // Service selection
+    function selectService(service) {
+      window.location.href = `service.html?service=${service}&lang=${currentLang}`;
+    }
+
+    function goHome() {
+      serviceScreen.classList.add('hidden');
+      idleScreen.classList.remove('hidden');
+    }
+
+    // Admin modal
+    function showAdmin() {
+      document.getElementById('adminModal').classList.remove('hidden');
+      document.getElementById('adminModal').style.display = 'flex';
+      document.getElementById('adminPassword').focus();
+    }
+    function closeAdminModal() {
+      document.getElementById('adminModal').classList.add('hidden');
+      document.getElementById('adminModal').style.display = '';
+      document.getElementById('adminPassword').value = '';
+      document.getElementById('adminError').classList.add('hidden');
+    }
+    function adminLogin(e) {
+      e.preventDefault();
+      const pw = document.getElementById('adminPassword').value;
+      // Hash check via API in production; simple check for kiosk
+      if (pw === 'aego2024') {
+        window.location.href = 'admin.html';
+      } else {
+        document.getElementById('adminError').classList.remove('hidden');
+      }
+    }
+
+    // Offline detection
+    function updateOnlineStatus() {
+      const banner = document.getElementById('offlineBanner');
+      if (!navigator.onLine) {
+        banner.classList.add('visible');
+      } else {
+        banner.classList.remove('visible');
+      }
+    }
+    window.addEventListener('online', updateOnlineStatus);
+    window.addEventListener('offline', updateOnlineStatus);
+    updateOnlineStatus();
+
+    // Register service worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').catch(() => {});
+    }
+
+    // Kiosk mode: prevent context menu, zoom
+    document.addEventListener('contextmenu', e => e.preventDefault());
+    document.addEventListener('gesturestart', e => e.preventDefault());
+  </script>
+</body>
+</html>

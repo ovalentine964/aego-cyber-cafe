@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#1B5E20">
+  <title>Aego — Staff Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .admin-layout {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      min-height: 100vh;
+    }
+    .sidebar {
+      background: var(--primary-dark);
+      color: white;
+      padding: 16px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+    .sidebar-brand {
+      font-size: 1.25rem;
+      font-weight: 700;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.15);
+      margin-bottom: 16px;
+    }
+    .sidebar-brand small {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 400;
+      opacity: 0.7;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      color: rgba(255,255,255,0.8);
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.15s ease;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      font-family: var(--font);
+    }
+    .nav-item:hover { background: rgba(255,255,255,0.1); color: white; }
+    .nav-item.active { background: rgba(255,255,255,0.2); color: white; font-weight: 600; }
+    .nav-item .badge-count {
+      margin-left: auto;
+      background: var(--error);
+      color: white;
+      font-size: 0.7rem;
+      padding: 2px 7px;
+      border-radius: 10px;
+      font-weight: 700;
+    }
+    .main-content {
+      padding: 24px;
+      background: var(--bg);
+      overflow-y: auto;
+    }
+    .main-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+    .main-header h1 {
+      font-size: 1.5rem;
+    }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    .filter-bar {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .filter-bar input, .filter-bar select {
+      min-height: 44px;
+      padding: 8px 14px;
+      font-size: 0.875rem;
+      border: 2px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: var(--font);
+    }
+    .filter-bar input { flex: 1; min-width: 200px; }
+    .request-row {
+      display: grid;
+      grid-template-columns: 80px 1fr 120px 100px 100px 120px;
+      align-items: center;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.875rem;
+      gap: 12px;
+    }
+    .request-row.header {
+      font-weight: 700;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-light);
+      background: #F5F5F5;
+      border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    }
+    .request-row:hover:not(.header) { background: #FAFAFA; }
+    .action-btns {
+      display: flex;
+      gap: 6px;
+    }
+    .action-btn {
+      padding: 6px 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: var(--font);
+      background: white;
+      transition: all 0.15s ease;
+    }
+    .action-btn.approve { color: var(--success); border-color: var(--success); }
+    .action-btn.approve:hover { background: var(--success); color: white; }
+    .action-btn.reject { color: var(--error); border-color: var(--error); }
+    .action-btn.reject:hover { background: var(--error); color: white; }
+    .action-btn.print-btn { color: var(--info); border-color: var(--info); }
+    .action-btn.print-btn:hover { background: var(--info); color: white; }
+    .action-btn.view { color: var(--text); }
+    .action-btn.view:hover { background: #F5F5F5; }
+    .log-entry {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.8rem;
+      font-family: 'Courier New', monospace;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .log-time { color: var(--text-light); white-space: nowrap; min-width: 80px; }
+    .log-level { font-weight: 700; min-width: 50px; }
+    .log-level.info { color: var(--info); }
+    .log-level.warn { color: var(--warning); }
+    .log-level.error { color: var(--error); }
+    .print-queue-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .print-queue-item .status-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+    .print-queue-item .status-icon.pending { background: #FFF3E0; }
+    .print-queue-item .status-icon.printing { background: #E3F2FD; }
+    .print-queue-item .status-icon.done { background: #E8F5E9; }
+    /* Responsive: collapse sidebar on mobile */
+    @media (max-width: 768px) {
+      .admin-layout { grid-template-columns: 1fr; }
+      .sidebar {
+        position: fixed;
+        left: -260px;
+        width: 260px;
+        z-index: 200;
+        transition: left 0.3s ease;
+      }
+      .sidebar.open { left: 0; }
+      .mobile-toggle {
+        display: block !important;
+        position: fixed;
+        top: 12px;
+        left: 12px;
+        z-index: 201;
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 10px 14px;
+        font-size: 1.25rem;
+        cursor: pointer;
+      }
+      .request-row {
+        grid-template-columns: 1fr;
+        gap: 6px;
+      }
+      .request-row.header { display: none; }
+    }
+    .mobile-toggle { display: none; }
+  </style>
+</head>
+<body>
+
+  <!-- Mobile Menu Toggle -->
+  <button class="mobile-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
+
+  <div class="admin-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        🌐 Aego Cyber
+        <small>Staff Dashboard</small>
+      </div>
+      <button class="nav-item active" onclick="showTab('dashboard')" data-tab="dashboard">📊 Dashboard</button>
+      <button class="nav-item" onclick="showTab('requests')" data-tab="requests">
+        📋 Requests <span class="badge-count" id="pendingCount">0</span>
+      </button>
+      <button class="nav-item" onclick="showTab('printqueue')" data-tab="printqueue">🖨️ Print Queue</button>
+      <button class="nav-item" onclick="showTab('revenue')" data-tab="revenue">💰 Revenue</button>
+      <button class="nav-item" onclick="showTab('logs')" data-tab="logs">📝 Logs</button>
+      <button class="nav-item" onclick="showTab('health')" data-tab="health">💚 Health</button>
+      <div style="margin-top:auto; padding-top:24px;">
+        <button class="nav-item" onclick="window.location.href='index.html'">🚪 Logout</button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+      <!-- ===== DASHBOARD TAB ===== -->
+      <div class="tab-panel active" id="tab-dashboard">
+        <div class="main-header">
+          <h1>📊 Today's Overview</h1>
+          <span class="text-muted" id="todayDate"></span>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-value" id="statRequests">0</div>
+            <div class="stat-label">Total Requests</div>
+            <div class="stat-change up">↑ from yesterday</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="statRevenue">KES 0</div>
+            <div class="stat-label">Revenue Today</div>
+            <div class="stat-change up">↑ growing</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="statPending">0</div>
+            <div class="stat-label">Pending Approval</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="statPrinted">0</div>
+            <div class="stat-label">Printed Today</div>
+          </div>
+        </div>
+
+        <!-- Recent Requests -->
+        <div class="card">
+          <div class="card-header flex-between">
+            <h3>Recent Requests</h3>
+            <button class="btn btn-ghost btn-sm" onclick="showTab('requests')">View All →</button>
+          </div>
+          <div id="recentRequests">
+            <div class="empty-state">
+              <div class="icon">📋</div>
+              <p>No requests yet today</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Popular Services Chart (text-based) -->
+        <div class="card mt-2">
+          <h3 class="mb-2">📈 Popular Services</h3>
+          <div id="popularServices">
+            <div class="flex-between mb-1">
+              <span>CV Writing</span>
+              <div style="flex:1;margin:0 12px;height:20px;background:#E8F5E9;border-radius:10px;overflow:hidden">
+                <div style="height:100%;background:var(--primary);width:60%;border-radius:10px"></div>
+              </div>
+              <span class="text-sm text-muted">60%</span>
+            </div>
+            <div class="flex-between mb-1">
+              <span>Gov Services</span>
+              <div style="flex:1;margin:0 12px;height:20px;background:#E8F5E9;border-radius:10px;overflow:hidden">
+                <div style="height:100%;background:var(--primary);width:25%;border-radius:10px"></div>
+              </div>
+              <span class="text-sm text-muted">25%</span>
+            </div>
+            <div class="flex-between mb-1">
+              <span>Translation</span>
+              <div style="flex:1;margin:0 12px;height:20px;background:#E8F5E9;border-radius:10px;overflow:hidden">
+                <div style="height:100%;background:var(--primary);width:15%;border-radius:10px"></div>
+              </div>
+              <span class="text-sm text-muted">15%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== REQUESTS TAB ===== -->
+      <div class="tab-panel" id="tab-requests">
+        <div class="main-header">
+          <h1>📋 All Requests</h1>
+          <button class="btn btn-primary btn-sm" onclick="loadRequests()">🔄 Refresh</button>
+        </div>
+
+        <div class="filter-bar">
+          <input type="text" id="searchRequests" placeholder="🔍 Search by name, phone, or ID..." oninput="filterRequests()">
+          <select id="filterStatus" onchange="filterRequests()">
+            <option value="">All Status</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="completed">Completed</option>
+            <option value="failed">Failed</option>
+          </select>
+          <select id="filterService" onchange="filterRequests()">
+            <option value="">All Services</option>
+            <option value="cv">CV Writing</option>
+            <option value="gov">Gov Services</option>
+            <option value="translate">Translation</option>
+            <option value="print">Printing</option>
+            <option value="data">Data Bundles</option>
+            <option value="typing">Typing</option>
+          </select>
+        </div>
+
+        <div class="card" style="padding:0;overflow:hidden">
+          <div class="request-row header">
+            <span>ID</span>
+            <span>Customer</span>
+            <span>Service</span>
+            <span>Amount</span>
+            <span>Status</span>
+            <span>Actions</span>
+          </div>
+          <div id="requestsList">
+            <div class="empty-state">
+              <div class="icon">📋</div>
+              <p>No requests found</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== PRINT QUEUE TAB ===== -->
+      <div class="tab-panel" id="tab-printqueue">
+        <div class="main-header">
+          <h1>🖨️ Print Queue</h1>
+          <button class="btn btn-primary btn-sm" onclick="loadPrintQueue()">🔄 Refresh</button>
+        </div>
+        <div class="card" style="padding:0">
+          <div id="printQueueList">
+            <div class="empty-state">
+              <div class="icon">🖨️</div>
+              <p>Print queue is empty</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== REVENUE TAB ===== -->
+      <div class="tab-panel" id="tab-revenue">
+        <div class="main-header">
+          <h1>💰 Revenue Summary</h1>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-value" id="revToday">KES 0</div>
+            <div class="stat-label">Today</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="revWeek">KES 0</div>
+            <div class="stat-label">This Week</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="revMonth">KES 0</div>
+            <div class="stat-label">This Month</div>
+          </div>
+        </div>
+        <div class="card mt-2">
+          <h3 class="mb-2">Revenue by Service</h3>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Service</th><th>Count</th><th>Revenue</th></tr></thead>
+              <tbody id="revenueTable">
+                <tr><td>CV Writing</td><td>—</td><td>—</td></tr>
+                <tr><td>Gov Services</td><td>—</td><td>—</td></tr>
+                <tr><td>Translation</td><td>—</td><td>—</td></tr>
+                <tr><td>Printing</td><td>—</td><td>—</td></tr>
+                <tr><td>Data Bundles</td><td>—</td><td>—</td></tr>
+                <tr><td>Typing</td><td>—</td><td>—</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== LOGS TAB ===== -->
+      <div class="tab-panel" id="tab-logs">
+        <div class="main-header">
+          <h1>📝 System Logs</h1>
+          <button class="btn btn-ghost btn-sm" onclick="loadLogs()">🔄 Refresh</button>
+        </div>
+        <div class="card" style="padding:0;max-height:70vh;overflow-y:auto">
+          <div id="logsList">
+            <div class="log-entry">
+              <span class="log-time">--:--</span>
+              <span class="log-level info">INFO</span>
+              <span>Loading logs...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== HEALTH TAB ===== -->
+      <div class="tab-panel" id="tab-health">
+        <div class="main-header">
+          <h1>💚 System Health</h1>
+          <button class="btn btn-primary btn-sm" onclick="checkHealth()">🔄 Check Now</button>
+        </div>
+        <div class="health-grid" id="healthGrid">
+          <div class="health-item">
+            <div class="health-dot green"></div>
+            <div>
+              <strong>Kiosk UI</strong><br>
+              <span class="text-sm text-muted">Online</span>
+            </div>
+          </div>
+          <div class="health-item">
+            <div class="health-dot" id="healthGateway"></div>
+            <div>
+              <strong>OpenClaw Gateway</strong><br>
+              <span class="text-sm text-muted" id="healthGatewayText">Checking...</span>
+            </div>
+          </div>
+          <div class="health-item">
+            <div class="health-dot" id="healthN8n"></div>
+            <div>
+              <strong>n8n Workflows</strong><br>
+              <span class="text-sm text-muted" id="healthN8nText">Checking...</span>
+            </div>
+          </div>
+          <div class="health-item">
+            <div class="health-dot" id="healthDB"></div>
+            <div>
+              <strong>Database</strong><br>
+              <span class="text-sm text-muted" id="healthDBText">Checking...</span>
+            </div>
+          </div>
+          <div class="health-item">
+            <div class="health-dot" id="healthMpesa"></div>
+            <div>
+              <strong>M-Pesa API</strong><br>
+              <span class="text-sm text-muted" id="healthMpesaText">Checking...</span>
+            </div>
+          </div>
+          <div class="health-item">
+            <div class="health-dot" id="healthWhatsApp"></div>
+            <div>
+              <strong>WhatsApp</strong><br>
+              <span class="text-sm text-muted" id="healthWhatsAppText">Checking...</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card mt-2">
+          <h3 class="mb-2">System Info</h3>
+          <div class="table-wrap">
+            <table>
+              <tbody>
+                <tr><td><strong>Version</strong></td><td>1.0.0</td></tr>
+                <tr><td><strong>Uptime</strong></td><td id="sysUptime">—</td></tr>
+                <tr><td><strong>Kiosk IP</strong></td><td id="sysIP">—</td></tr>
+                <tr><td><strong>Last Restart</strong></td><td id="sysRestart">—</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <div id="toastContainer" class="toast-container"></div>
+
+  <script src="app.js"></script>
+  <script>
+    // === ADMIN DASHBOARD LOGIC ===
+    let allRequests = [];
+
+    // Tab navigation
+    function showTab(name) {
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      const panel = document.getElementById('tab-' + name);
+      const nav = document.querySelector(`[data-tab="${name}"]`);
+      if (panel) panel.classList.add('active');
+      if (nav) nav.classList.add('active');
+      // Close mobile sidebar
+      document.querySelector('.sidebar')?.classList.remove('open');
+    }
+
+    // Set today's date
+    document.getElementById('todayDate').textContent = new Date().toLocaleDateString('en-KE', {
+      weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+    });
+
+    // === API CALLS ===
+    async function loadDashboard() {
+      try {
+        const res = await fetch('/api/admin/dashboard');
+        const data = await res.json();
+        document.getElementById('statRequests').textContent = data.totalRequests || 0;
+        document.getElementById('statRevenue').textContent = 'KES ' + (data.revenue || 0).toLocaleString();
+        document.getElementById('statPending').textContent = data.pending || 0;
+        document.getElementById('statPrinted').textContent = data.printed || 0;
+        document.getElementById('pendingCount').textContent = data.pending || 0;
+        if (data.recentRequests) renderRecentRequests(data.recentRequests);
+      } catch (err) {
+        console.error('Dashboard load failed:', err);
+      }
+    }
+
+    async function loadRequests() {
+      try {
+        const res = await fetch('/api/admin/requests');
+        allRequests = await res.json();
+        renderRequests(allRequests);
+      } catch (err) {
+        console.error('Requests load failed:', err);
+      }
+    }
+
+    function renderRequests(requests) {
+      const container = document.getElementById('requestsList');
+      if (!requests.length) {
+        container.innerHTML = '<div class="empty-state"><div class="icon">📋</div><p>No requests found</p></div>';
+        return;
+      }
+      container.innerHTML = requests.map(r => `
+        <div class="request-row" data-id="${r.id}">
+          <span style="color:var(--text-light);font-family:monospace">#${r.id}</span>
+          <div>
+            <strong>${escapeHtml(r.customer_name || 'Walk-in')}</strong><br>
+            <span class="text-sm text-muted">${r.phone || ''}</span>
+          </div>
+          <span>${r.service_type || '—'}</span>
+          <span>KES ${r.amount || 0}</span>
+          <span class="badge badge-${statusBadge(r.status)}">${r.status || 'pending'}</span>
+          <div class="action-btns">
+            ${r.status === 'pending' ? `
+              <button class="action-btn approve" onclick="approveRequest(${r.id})">✓ Approve</button>
+              <button class="action-btn reject" onclick="rejectRequest(${r.id})">✗</button>
+            ` : ''}
+            ${r.status === 'approved' ? `<button class="action-btn print-btn" onclick="printRequest(${r.id})">🖨️</button>` : ''}
+            <button class="action-btn view" onclick="viewRequest(${r.id})">👁</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderRecentRequests(requests) {
+      const container = document.getElementById('recentRequests');
+      if (!requests.length) return;
+      container.innerHTML = requests.slice(0, 5).map(r => `
+        <div class="queue-item">
+          <div class="avatar">${(r.customer_name || 'W')[0].toUpperCase()}</div>
+          <div class="info">
+            <div class="name">${escapeHtml(r.customer_name || 'Walk-in')}</div>
+            <div class="meta">${r.service_type} — ${timeAgo(r.created_at)}</div>
+          </div>
+          <span class="badge badge-${statusBadge(r.status)}">${r.status}</span>
+        </div>
+      `).join('');
+    }
+
+    function filterRequests() {
+      const search = document.getElementById('searchRequests').value.toLowerCase();
+      const status = document.getElementById('filterStatus').value;
+      const service = document.getElementById('filterService').value;
+      let filtered = allRequests;
+      if (search) filtered = filtered.filter(r =>
+        (r.customer_name || '').toLowerCase().includes(search) ||
+        (r.phone || '').includes(search) ||
+        String(r.id).includes(search)
+      );
+      if (status) filtered = filtered.filter(r => r.status === status);
+      if (service) filtered = filtered.filter(r => r.service_type === service);
+      renderRequests(filtered);
+    }
+
+    async function approveRequest(id) {
+      try {
+        await fetch(`/api/admin/requests/${id}/approve`, { method: 'POST' });
+        showToast('Request approved!', 'success');
+        loadRequests();
+        loadDashboard();
+      } catch (err) { showToast('Failed to approve', 'error'); }
+    }
+
+    async function rejectRequest(id) {
+      if (!confirm('Reject this request?')) return;
+      try {
+        await fetch(`/api/admin/requests/${id}/reject`, { method: 'POST' });
+        showToast('Request rejected.', 'warning');
+        loadRequests();
+        loadDashboard();
+      } catch (err) { showToast('Failed to reject', 'error'); }
+    }
+
+    function viewRequest(id) {
+      const r = allRequests.find(x => x.id === id);
+      if (r) {
+        alert(`Request #${r.id}\n\nCustomer: ${r.customer_name || 'Walk-in'}\nPhone: ${r.phone || 'N/A'}\nService: ${r.service_type}\nAmount: KES ${r.amount}\nStatus: ${r.status}\n\nDetails:\n${r.details || 'No additional details'}`);
+      }
+    }
+
+    async function printRequest(id) {
+      try {
+        await fetch(`/api/admin/requests/${id}/print`, { method: 'POST' });
+        showToast('Sent to printer!', 'success');
+        loadRequests();
+      } catch (err) { showToast('Print failed', 'error'); }
+    }
+
+    // === PRINT QUEUE ===
+    async function loadPrintQueue() {
+      try {
+        const res = await fetch('/api/admin/print-queue');
+        const data = await res.json();
+        const container = document.getElementById('printQueueList');
+        if (!data.length) {
+          container.innerHTML = '<div class="empty-state"><div class="icon">🖨️</div><p>Print queue is empty</p></div>';
+          return;
+        }
+        container.innerHTML = data.map(item => `
+          <div class="print-queue-item">
+            <div class="status-icon ${item.status}">${item.status === 'done' ? '✅' : item.status === 'printing' ? '⏳' : '📄'}</div>
+            <div style="flex:1">
+              <strong>#${item.id} — ${item.service_type}</strong><br>
+              <span class="text-sm text-muted">${item.customer_name || 'Walk-in'} • ${item.pages || 1} page(s)</span>
+            </div>
+            <span class="badge badge-${item.status === 'done' ? 'success' : item.status === 'printing' ? 'info' : 'warning'}">${item.status}</span>
+          </div>
+        `).join('');
+      } catch (err) {
+        console.error('Print queue load failed:', err);
+      }
+    }
+
+    // === REVENUE ===
+    async function loadRevenue() {
+      try {
+        const res = await fetch('/api/admin/revenue');
+        const data = await res.json();
+        document.getElementById('revToday').textContent = 'KES ' + (data.today || 0).toLocaleString();
+        document.getElementById('revWeek').textContent = 'KES ' + (data.week || 0).toLocaleString();
+        document.getElementById('revMonth').textContent = 'KES ' + (data.month || 0).toLocaleString();
+      } catch (err) {
+        console.error('Revenue load failed:', err);
+      }
+    }
+
+    // === LOGS ===
+    async function loadLogs() {
+      try {
+        const res = await fetch('/api/admin/logs');
+        const data = await res.json();
+        const container = document.getElementById('logsList');
+        if (!data.length) {
+          container.innerHTML = '<div class="log-entry"><span class="log-time">--:--</span><span class="log-level info">INFO</span><span>No logs</span></div>';
+          return;
+        }
+        container.innerHTML = data.map(l => `
+          <div class="log-entry">
+            <span class="log-time">${formatTime(l.timestamp)}</span>
+            <span class="log-level ${l.level || 'info'}">${(l.level || 'INFO').toUpperCase()}</span>
+            <span>${escapeHtml(l.message)}</span>
+          </div>
+        `).join('');
+      } catch (err) {
+        console.error('Logs load failed:', err);
+      }
+    }
+
+    // === HEALTH ===
+    async function checkHealth() {
+      const services = [
+        { key: 'gateway', url: '/api/health/gateway' },
+        { key: 'n8n', url: '/api/health/n8n' },
+        { key: 'db', url: '/api/health/db' },
+        { key: 'mpesa', url: '/api/health/mpesa' },
+        { key: 'whatsapp', url: '/api/health/whatsapp' }
+      ];
+      for (const svc of services) {
+        try {
+          const res = await fetch(svc.url, { signal: AbortSignal.timeout(5000) });
+          const data = await res.json();
+          const dot = document.getElementById('health' + capitalize(svc.key));
+          const text = document.getElementById('health' + capitalize(svc.key) + 'Text');
+          if (dot) dot.className = 'health-dot ' + (data.status === 'ok' ? 'green' : data.status === 'degraded' ? 'yellow' : 'red');
+          if (text) text.textContent = data.message || (data.status === 'ok' ? 'Healthy' : 'Issue detected');
+        } catch (err) {
+          const dot = document.getElementById('health' + capitalize(svc.key));
+          const text = document.getElementById('health' + capitalize(svc.key) + 'Text');
+          if (dot) dot.className = 'health-dot red';
+          if (text) text.textContent = 'Unreachable';
+        }
+      }
+    }
+
+    // === HELPERS ===
+    function statusBadge(s) {
+      return { pending: 'warning', approved: 'info', completed: 'success', failed: 'error' }[s] || 'info';
+    }
+
+    function timeAgo(ts) {
+      if (!ts) return '';
+      const diff = Date.now() - new Date(ts).getTime();
+      const mins = Math.floor(diff / 60000);
+      if (mins < 1) return 'just now';
+      if (mins < 60) return mins + 'm ago';
+      const hrs = Math.floor(mins / 60);
+      if (hrs < 24) return hrs + 'h ago';
+      return Math.floor(hrs / 24) + 'd ago';
+    }
+
+    function formatTime(ts) {
+      if (!ts) return '--:--';
+      return new Date(ts).toLocaleTimeString('en-KE', { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+    function escapeHtml(s) {
+      if (!s) return '';
+      return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    // Initial load
+    loadDashboard();
+    loadRequests();
+    loadRevenue();
+    loadLogs();
+    checkHealth();
+
+    // Auto-refresh every 30s
+    setInterval(() => { loadDashboard(); loadRequests(); }, 30000);
+  </script>
+</body>
+</html>

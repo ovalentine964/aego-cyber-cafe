@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#1B5E20">
+  <title>Aego Cyber Cafe — Free WiFi</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --primary: #1B5E20;
+      --primary-light: #4CAF50;
+      --accent: #FF6F00;
+      --bg: #F5F5F5;
+      --text: #212121;
+      --text-light: #616161;
+      --white: #FFFFFF;
+      --shadow: 0 2px 12px rgba(0,0,0,0.1);
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(180deg, #1B5E20 0%, #2E7D32 40%, #F5F5F5 40%);
+      color: var(--text);
+      min-height: 100vh;
+      -webkit-text-size-adjust: 100%;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+    .portal-container {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 24px 16px;
+    }
+    /* Hero */
+    .hero {
+      text-align: center;
+      color: white;
+      padding: 32px 0 48px;
+    }
+    .hero-logo {
+      width: 80px;
+      height: 80px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      margin: 0 auto 16px;
+      backdrop-filter: blur(10px);
+    }
+    .hero h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .hero p {
+      font-size: 1rem;
+      opacity: 0.9;
+    }
+    .wifi-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,0.2);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.875rem;
+      margin-top: 12px;
+      backdrop-filter: blur(10px);
+    }
+    /* Cards */
+    .card {
+      background: var(--white);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .card h2 {
+      font-size: 1.125rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    /* Service Menu */
+    .service-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .service-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px;
+      background: var(--bg);
+      border-radius: 12px;
+      text-decoration: none;
+      color: var(--text);
+      transition: all 0.15s ease;
+      border: 2px solid transparent;
+    }
+    .service-item:hover, .service-item:active {
+      border-color: var(--primary-light);
+      background: #E8F5E9;
+    }
+    .service-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: var(--primary);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+    .service-info { flex: 1; }
+    .service-name { font-weight: 600; font-size: 0.9375rem; }
+    .service-desc { font-size: 0.75rem; color: var(--text-light); }
+    .service-price {
+      font-weight: 700;
+      color: var(--accent);
+      font-size: 0.875rem;
+    }
+    /* WiFi Bundles */
+    .bundle-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .bundle {
+      text-align: center;
+      padding: 14px 8px;
+      background: var(--bg);
+      border-radius: 12px;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .bundle:hover, .bundle.selected {
+      border-color: var(--primary);
+      background: #E8F5E9;
+    }
+    .bundle .data { font-weight: 700; font-size: 1rem; }
+    .bundle .price { color: var(--accent); font-weight: 700; font-size: 0.875rem; }
+    .bundle .time { font-size: 0.7rem; color: var(--text-light); }
+    /* CTA Button */
+    .btn-cta {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      padding: 16px 24px;
+      font-size: 1.125rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      font-family: inherit;
+    }
+    .btn-cta:active { transform: scale(0.98); }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover { background: #0D3B0F; }
+    .btn-accent { background: var(--accent); color: white; }
+    .btn-accent:hover { background: #E65100; }
+    .btn-whatsapp {
+      background: #25D366;
+      color: white;
+    }
+    .btn-whatsapp:hover { background: #128C7E; }
+    /* Phone Input */
+    .phone-input-group {
+      display: flex;
+      gap: 0;
+      margin: 12px 0;
+    }
+    .phone-prefix {
+      background: #F5F5F5;
+      border: 2px solid #E0E0E0;
+      border-right: none;
+      border-radius: 10px 0 0 10px;
+      padding: 12px;
+      font-weight: 600;
+      color: var(--text);
+      font-size: 1rem;
+    }
+    .phone-input-group input {
+      flex: 1;
+      border: 2px solid #E0E0E0;
+      border-radius: 0 10px 10px 0;
+      padding: 12px;
+      font-size: 1rem;
+      font-family: inherit;
+      outline: none;
+    }
+    .phone-input-group input:focus { border-color: var(--primary); }
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 24px 0;
+      color: var(--text-light);
+      font-size: 0.75rem;
+    }
+    .footer a { color: var(--primary); text-decoration: none; }
+    /* Toast */
+    .toast {
+      position: fixed;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #333;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-size: 0.875rem;
+      z-index: 999;
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+    @keyframes fadeIn { from { opacity: 0; transform: translateX(-50%) translateY(-10px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+    /* Loading */
+    .spinner {
+      width: 24px; height: 24px;
+      border: 3px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      display: inline-block;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    /* Sections */
+    .section { display: none; }
+    .section.active { display: block; }
+  </style>
+</head>
+<body>
+
+  <div class="portal-container">
+
+    <!-- HERO -->
+    <div class="hero">
+      <div class="hero-logo">🌐</div>
+      <h1>Aego Cyber Cafe</h1>
+      <p>AI-Powered Services — Nyatike, Migori</p>
+      <div class="wifi-badge">📶 Connected to Aego WiFi</div>
+    </div>
+
+    <!-- MAIN MENU -->
+    <div class="section active" id="menuSection">
+
+      <!-- AI Assistant CTA -->
+      <div class="card" style="background: linear-gradient(135deg, #1B5E20, #4CAF50); color: white;">
+        <h2 style="color:white">🤖 Try Our AI Assistant</h2>
+        <p style="opacity:0.9;margin-bottom:14px;font-size:0.9rem">Get help with CV writing, government forms, translations, and more — powered by AI!</p>
+        <button class="btn-cta btn-whatsapp" onclick="openWhatsApp()">
+          💬 Chat on WhatsApp
+        </button>
+        <p style="font-size:0.75rem;opacity:0.7;margin-top:8px;text-align:center">Works on any phone — no app needed!</p>
+      </div>
+
+      <!-- WiFi Bundles -->
+      <div class="card">
+        <h2>📶 Buy WiFi Bundles</h2>
+        <div class="bundle-grid">
+          <div class="bundle" onclick="selectBundle(this, 20, '1hr')" data-price="20">
+            <div class="data">1 Hour</div>
+            <div class="price">KES 20</div>
+          </div>
+          <div class="bundle" onclick="selectBundle(this, 50, '3hr')" data-price="50">
+            <div class="data">3 Hours</div>
+            <div class="price">KES 50</div>
+          </div>
+          <div class="bundle" onclick="selectBundle(this, 100, '24hr')" data-price="100">
+            <div class="data">24 Hours</div>
+            <div class="price">KES 100</div>
+          </div>
+        </div>
+        <div class="phone-input-group">
+          <span class="phone-prefix">+254</span>
+          <input type="tel" id="wifiPhone" placeholder="712345678" maxlength="10">
+        </div>
+        <button class="btn-cta btn-accent" id="buyWifiBtn" onclick="buyWifi()">
+          📶 Buy WiFi via M-Pesa
+        </button>
+      </div>
+
+      <!-- Services Menu -->
+      <div class="card">
+        <h2>🛠️ Our Services</h2>
+        <div class="service-list">
+          <a class="service-item" href="https://wa.me/{{AEGO_BOT_NUMBER}}?text=CV" target="_blank">
+            <div class="service-icon">📄</div>
+            <div class="service-info">
+              <div class="service-name">CV Writing</div>
+              <div class="service-desc">Professional CV in minutes</div>
+            </div>
+            <div class="service-price">KES 100</div>
+          </a>
+          <a class="service-item" href="https://wa.me/{{AEGO_BOT_NUMBER}}?text=GOV" target="_blank">
+            <div class="service-icon">🏛️</div>
+            <div class="service-info">
+              <div class="service-name">Government Services</div>
+              <div class="service-desc">KRA, eCitizen, NHIF, NSSF</div>
+            </div>
+            <div class="service-price">KES 50+</div>
+          </a>
+          <a class="service-item" href="https://wa.me/{{AEGO_BOT_NUMBER}}?text=TRANSLATE" target="_blank">
+            <div class="service-icon">🌍</div>
+            <div class="service-info">
+              <div class="service-name">Translation</div>
+              <div class="service-desc">English, Swahili, Dholuo</div>
+            </div>
+            <div class="service-price">KES 50</div>
+          </a>
+          <a class="service-item" href="index.html">
+            <div class="service-icon">🖨️</div>
+            <div class="service-info">
+              <div class="service-name">Printing</div>
+              <div class="service-desc">B&W and color prints</div>
+            </div>
+            <div class="service-price">KES 10/pg</div>
+          </a>
+          <a class="service-item" href="https://wa.me/{{AEGO_BOT_NUMBER}}?text=TYPING" target="_blank">
+            <div class="service-icon">⌨️</div>
+            <div class="service-info">
+              <div class="service-name">Typing & Forms</div>
+              <div class="service-desc">Document typing, form filling</div>
+            </div>
+            <div class="service-price">KES 30</div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Visit Us -->
+      <div class="card" style="text-align:center">
+        <h2 style="justify-content:center">📍 Visit Us</h2>
+        <p style="font-size:0.9rem;color:var(--text-light)">
+          Aego Cyber Cafe<br>
+          Nyatike, Migori County<br>
+          <strong>Open Daily: 7 AM – 9 PM</strong>
+        </p>
+        <p style="margin-top:8px;font-size:0.875rem">
+          📞 <a href="tel:+254XXXXXXXXX" style="color:var(--primary)">+254 XXX XXX XXX</a>
+        </p>
+      </div>
+
+    </div>
+
+    <!-- PAYMENT SECTION -->
+    <div class="section" id="paymentSection">
+      <div class="card" style="text-align:center">
+        <h2 style="justify-content:center">📶 WiFi Bundle</h2>
+        <p id="bundleInfo" style="font-size:1.25rem;font-weight:700;color:var(--primary)">3 Hours — KES 50</p>
+        <p style="color:var(--text-light);font-size:0.875rem;margin:8px 0">Pay with M-Pesa</p>
+        <div class="phone-input-group">
+          <span class="phone-prefix">+254</span>
+          <input type="tel" id="payPhone" placeholder="712345678" maxlength="10">
+        </div>
+        <button class="btn-cta btn-primary" id="payBtn" onclick="payWifi()">
+          📱 Pay with M-Pesa
+        </button>
+        <p id="payStatus" style="margin-top:12px;font-size:0.875rem;color:var(--text-light)"></p>
+        <button style="margin-top:16px;background:none;border:none;color:var(--primary);cursor:pointer;font-size:0.875rem" onclick="showSection('menuSection')">← Back to menu</button>
+      </div>
+    </div>
+
+    <!-- SUCCESS SECTION -->
+    <div class="section" id="successSection">
+      <div class="card" style="text-align:center;padding:32px">
+        <div style="font-size:3rem;margin-bottom:12px">✅</div>
+        <h2>WiFi Activated!</h2>
+        <p style="color:var(--text-light);margin:8px 0" id="successInfo">Your 3-hour bundle is now active.</p>
+        <p style="font-size:0.875rem;color:var(--text-light)">Enjoy browsing! 🎉</p>
+        <button class="btn-cta btn-primary" style="margin-top:20px" onclick="showSection('menuSection')">
+          🏠 Back to Menu
+        </button>
+      </div>
+    </div>
+
+    <div class="footer">
+      <p>Powered by <strong>Aego Cyber Cafe</strong> © 2024</p>
+      <p style="margin-top:4px"><a href="#">Terms</a> · <a href="#">Privacy</a></p>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // === PORTAL LOGIC ===
+    let selectedBundle = { price: 50, duration: '3hr' };
+
+    function selectBundle(el, price, duration) {
+      document.querySelectorAll('.bundle').forEach(b => b.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedBundle = { price, duration };
+    }
+
+    function openWhatsApp() {
+      // Replace with actual Aego bot number
+      const number = '{{AEGO_BOT_NUMBER}}';
+      if (number.includes('{')) {
+        showToast('WhatsApp bot not configured yet');
+        return;
+      }
+      window.open(`https://wa.me/${number}?text=Hello! I need help with a service.`, '_blank');
+    }
+
+    function buyWifi() {
+      const phone = document.getElementById('wifiPhone').value;
+      if (!phone || phone.length < 9) {
+        showToast('Please enter your phone number');
+        return;
+      }
+      document.getElementById('bundleInfo').textContent =
+        `${selectedBundle.duration === '1hr' ? '1 Hour' : selectedBundle.duration === '3hr' ? '3 Hours' : '24 Hours'} — KES ${selectedBundle.price}`;
+      document.getElementById('payPhone').value = phone;
+      showSection('paymentSection');
+    }
+
+    async function payWifi() {
+      const phone = document.getElementById('payPhone').value;
+      if (!phone || phone.length < 9) {
+        showToast('Enter your phone number');
+        return;
+      }
+
+      const btn = document.getElementById('payBtn');
+      const status = document.getElementById('payStatus');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Sending M-Pesa prompt...';
+      status.textContent = '';
+
+      try {
+        const res = await fetch('/api/mpesa/stkpush', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            phone: '254' + phone.replace(/^0/, ''),
+            amount: selectedBundle.price,
+            service: 'wifi',
+            account_ref: 'AEGO-WIFI-' + Date.now()
+          })
+        });
+        const data = await res.json();
+
+        if (data.checkoutRequestId || data.CheckoutRequestID) {
+          status.textContent = '📱 Check your phone for M-Pesa prompt...';
+          status.style.color = '#FF6F00';
+
+          // Poll for payment status
+          const checkoutId = data.checkoutRequestId || data.CheckoutRequestID;
+          let attempts = 0;
+          const poll = setInterval(async () => {
+            attempts++;
+            if (attempts > 30) {
+              clearInterval(poll);
+              status.textContent = '❌ Payment timed out. Try again.';
+              status.style.color = '#C62828';
+              btn.disabled = false;
+              btn.innerHTML = '📱 Pay with M-Pesa';
+              return;
+            }
+            try {
+              const statusRes = await fetch(`/api/mpesa/status/${checkoutId}`);
+              const statusData = await statusRes.json();
+              if (statusData.status === 'success') {
+                clearInterval(poll);
+                // Activate WiFi
+                await activateWifi(phone, selectedBundle.duration);
+                document.getElementById('successInfo').textContent =
+                  `Your ${selectedBundle.duration === '1hr' ? '1-hour' : selectedBundle.duration === '3hr' ? '3-hour' : '24-hour'} WiFi bundle is now active.`;
+                showSection('successSection');
+              } else if (statusData.status === 'failed') {
+                clearInterval(poll);
+                status.textContent = '❌ Payment cancelled or failed.';
+                status.style.color = '#C62828';
+                btn.disabled = false;
+                btn.innerHTML = '📱 Pay with M-Pesa';
+              }
+            } catch (e) {}
+          }, 2000);
+        } else {
+          status.textContent = data.error || 'Failed to initiate payment.';
+          status.style.color = '#C62828';
+          btn.disabled = false;
+          btn.innerHTML = '📱 Pay with M-Pesa';
+        }
+      } catch (err) {
+        status.textContent = 'Network error. Please try again.';
+        status.style.color = '#C62828';
+        btn.disabled = false;
+        btn.innerHTML = '📱 Pay with M-Pesa';
+      }
+    }
+
+    async function activateWifi(phone, duration) {
+      try {
+        await fetch('/api/wifi/activate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone: '254' + phone.replace(/^0/, ''), duration })
+        });
+      } catch (e) {}
+    }
+
+    function showSection(id) {
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.style.display = 'block';
+      setTimeout(() => { t.style.display = 'none'; }, 3000);
+    }
+
+    // Phone input cleanup
+    document.querySelectorAll('input[type="tel"]').forEach(input => {
+      input.addEventListener('input', function() {
+        this.value = this.value.replace(/\D/g, '').substring(0, 10);
+      });
+    });
+
+    // Auto-detect captive portal redirect
+    // Some systems need this to dismiss the portal popup
+    if (window.location.search.includes('authenticated')) {
+      showSection('successSection');
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#1B5E20">
+  <title>Aego — Service</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .input-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      padding: 24px 0;
+    }
+    .or-divider {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      width: 100%;
+      max-width: 400px;
+      color: var(--text-light);
+      font-size: 0.875rem;
+    }
+    .or-divider::before, .or-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+    .transcript-box {
+      width: 100%;
+      max-width: 600px;
+      min-height: 80px;
+      padding: 16px;
+      background: #F5F5F5;
+      border-radius: var(--radius);
+      font-size: 1.125rem;
+      line-height: 1.6;
+      color: var(--text);
+      border: 2px solid var(--border);
+    }
+    .transcript-box:focus-within {
+      border-color: var(--primary);
+    }
+    .ai-response {
+      width: 100%;
+      max-width: 600px;
+      padding: 20px;
+      background: #E8F5E9;
+      border-radius: var(--radius);
+      border-left: 4px solid var(--primary);
+      font-size: 1rem;
+      line-height: 1.7;
+      white-space: pre-wrap;
+    }
+    .ai-response .label {
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .gov-fields {
+      width: 100%;
+      max-width: 600px;
+    }
+    .gov-field-group {
+      margin-bottom: 12px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="offlineBanner" class="offline-banner">⚡ No internet — some services unavailable</div>
+
+  <!-- Header -->
+  <div class="header">
+    <button class="back-btn" onclick="window.location.href='index.html'">←</button>
+    <span class="header-title" id="pageTitle">Service</span>
+    <div class="header-actions">
+      <span class="status status-ready" id="connStatus"><span class="status-dot"></span> Online</span>
+    </div>
+  </div>
+
+  <!-- Progress Steps -->
+  <div class="progress-steps" id="progressSteps">
+    <div class="step active" id="step1">
+      <div class="step-circle">1</div>
+      <span class="text-sm">Input</span>
+    </div>
+    <div class="step-line" id="line1"></div>
+    <div class="step" id="step2">
+      <div class="step-circle">2</div>
+      <span class="text-sm">Processing</span>
+    </div>
+    <div class="step-line" id="line2"></div>
+    <div class="step" id="step3">
+      <div class="step-circle">3</div>
+      <span class="text-sm">Payment</span>
+    </div>
+    <div class="step-line" id="line3"></div>
+    <div class="step" id="step4">
+      <div class="step-circle">4</div>
+      <span class="text-sm">Done</span>
+    </div>
+  </div>
+
+  <div class="container" style="padding-bottom: 120px;">
+
+    <!-- SERVICE: CV WRITING -->
+    <div id="svc_cv" class="service-section hidden">
+      <h2 class="mb-2">📄 CV Writing Service</h2>
+      <p class="text-muted mb-2">Tell us about yourself. Speak or type — we'll create a professional CV for you.</p>
+
+      <!-- CV Info Collection -->
+      <div id="cvInputSection">
+        <div class="gov-fields">
+          <div class="gov-field-group">
+            <label class="form-label">Full Name</label>
+            <input type="text" class="form-input" id="cv_name" placeholder="e.g. James Otieno">
+          </div>
+          <div class="gov-field-group">
+            <label class="form-label">Phone Number</label>
+            <input type="tel" class="form-input" id="cv_phone" placeholder="0712345678">
+          </div>
+          <div class="gov-field-group">
+            <label class="form-label">Education</label>
+            <input type="text" class="form-input" id="cv_education" placeholder="e.g. KCSE, Diploma in IT">
+          </div>
+          <div class="gov-field-group">
+            <label class="form-label">Work Experience</label>
+            <textarea class="form-input" id="cv_experience" placeholder="Describe your work experience..."></textarea>
+          </div>
+          <div class="gov-field-group">
+            <label class="form-label">Skills</label>
+            <input type="text" class="form-input" id="cv_skills" placeholder="e.g. Microsoft Office, customer service">
+          </div>
+        </div>
+
+        <div class="or-divider mt-2 mb-2">or speak your details</div>
+
+        <!-- Voice Input -->
+        <div class="input-area">
+          <button class="voice-btn" id="voiceBtn" onmousedown="startVoice()" onmouseup="stopVoice()" ontouchstart="startVoice()" ontouchend="stopVoice()">
+            🎤
+          </button>
+          <p class="voice-hint">Hold to speak — release when done</p>
+          <div class="transcript-box" id="transcript" contenteditable="false">
+            <span class="text-muted">Your speech will appear here...</span>
+          </div>
+        </div>
+
+        <button class="btn btn-primary btn-block btn-lg mt-2" onclick="submitCV()">
+          📄 Generate My CV
+        </button>
+      </div>
+
+      <!-- AI Response -->
+      <div id="cvResult" class="hidden mt-3">
+        <div class="ai-response" id="cvContent">
+          <div class="label">🤖 AI Generated CV</div>
+          <div id="cvText"></div>
+        </div>
+        <div class="flex gap-sm mt-2">
+          <button class="btn btn-primary" onclick="printCV()" style="flex:1">🖨️ Print CV</button>
+          <button class="btn btn-accent" onclick="goToPayment('cv')" style="flex:1">💳 Pay KES 100</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SERVICE: GOVERNMENT SERVICES -->
+    <div id="svc_gov" class="service-section hidden">
+      <h2 class="mb-2">🏛️ Government Services</h2>
+      <p class="text-muted mb-2">Select the service you need help with:</p>
+
+      <div id="govSelectSection">
+        <div class="grid-2">
+          <button class="btn btn-service" onclick="selectGovService('kra')">
+            <span class="icon">📋</span>
+            <span class="label">KRA PIN</span>
+            <span class="price">KES 100</span>
+          </button>
+          <button class="btn btn-service" onclick="selectGovService('ecitizen')">
+            <span class="icon">🪪</span>
+            <span class="label">eCitizen</span>
+            <span class="price">KES 150</span>
+          </button>
+          <button class="btn btn-service" onclick="selectGovService('nhif')">
+            <span class="icon">🏥</span>
+            <span class="label">NHIF</span>
+            <span class="price">KES 100</span>
+          </button>
+          <button class="btn btn-service" onclick="selectGovService('nssf')">
+            <span class="icon">🏦</span>
+            <span class="label">NSSF</span>
+            <span class="price">KES 100</span>
+          </button>
+          <button class="btn btn-service" onclick="selectGovService('goodconduct')">
+            <span class="icon">✅</span>
+            <span class="label">Good Conduct</span>
+            <span class="price">KES 200</span>
+          </button>
+          <button class="btn btn-service" onclick="selectGovService('birth')">
+            <span class="icon">👶</span>
+            <span class="label">Birth Cert</span>
+            <span class="price">KES 100</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Gov Form Fields (shown after selection) -->
+      <div id="govFormSection" class="hidden">
+        <button class="btn btn-ghost btn-sm mb-2" onclick="backToGovSelect()">← Back to services</button>
+        <h3 id="govServiceName" class="mb-2"></h3>
+        <div class="gov-fields" id="govFields"></div>
+        <button class="btn btn-primary btn-block btn-lg mt-2" onclick="submitGov()">
+          🏛️ Submit Application
+        </button>
+      </div>
+
+      <!-- Gov Result -->
+      <div id="govResult" class="hidden mt-3">
+        <div class="ai-response" id="govContent">
+          <div class="label">✅ Application Ready</div>
+          <div id="govText"></div>
+        </div>
+        <div class="flex gap-sm mt-2">
+          <button class="btn btn-primary" onclick="printGov()" style="flex:1">🖨️ Print</button>
+          <button class="btn btn-accent" onclick="goToPayment('gov')" style="flex:1">💳 Pay</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SERVICE: TRANSLATION -->
+    <div id="svc_translate" class="service-section hidden">
+      <h2 class="mb-2">🌍 Translation Service</h2>
+      <p class="text-muted mb-2">Speak or type text to translate between English, Swahili, and Dholuo.</p>
+
+      <div class="form-group">
+        <label class="form-label">Translate from</label>
+        <select class="form-input" id="translateFrom">
+          <option value="en">English</option>
+          <option value="sw">Kiswahili</option>
+          <option value="lu">Dholuo</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Translate to</label>
+        <select class="form-input" id="translateTo">
+          <option value="sw">Kiswahili</option>
+          <option value="en">English</option>
+          <option value="lu">Dholuo</option>
+        </select>
+      </div>
+
+      <div class="input-area">
+        <button class="voice-btn" id="voiceBtnTranslate" onmousedown="startVoice('translateInput')" onmouseup="stopVoice()" ontouchstart="startVoice('translateInput')" ontouchend="stopVoice()">
+          🎤
+        </button>
+        <p class="voice-hint">Hold to speak or type below</p>
+        <textarea class="form-input" id="translateInput" placeholder="Type text to translate..." style="min-height:100px"></textarea>
+      </div>
+
+      <button class="btn btn-primary btn-block btn-lg mt-2" onclick="submitTranslation()">
+        🌍 Translate
+      </button>
+
+      <div id="translateResult" class="hidden mt-3">
+        <div class="ai-response">
+          <div class="label">🔄 Translation</div>
+          <div id="translateText"></div>
+        </div>
+        <button class="btn btn-primary btn-block mt-2" onclick="printTranslation()">🖨️ Print Translation (KES 50)</button>
+      </div>
+    </div>
+
+    <!-- SERVICE: PRINTING -->
+    <div id="svc_print" class="service-section hidden">
+      <h2 class="mb-2">🖨️ Printing Service</h2>
+      <p class="text-muted mb-2">KES 10 per page (B&W), KES 20 per page (color)</p>
+
+      <div class="form-group">
+        <label class="form-label">What do you want to print?</label>
+        <select class="form-input" id="printType">
+          <option value="document">Document from USB/Phone</option>
+          <option value="cv">CV (from our service)</option>
+          <option value="form">Government Form</option>
+          <option value="photo">Photo</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Number of pages</label>
+        <input type="number" class="form-input" id="printPages" value="1" min="1" max="100">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Print type</label>
+        <select class="form-input" id="printColor">
+          <option value="bw">Black & White (KES 10/pg)</option>
+          <option value="color">Color (KES 20/pg)</option>
+        </select>
+      </div>
+
+      <div class="card mt-2" style="text-align:center">
+        <p class="text-muted">Estimated Cost</p>
+        <p class="mpesa-amount" id="printCost">KES 10</p>
+      </div>
+
+      <button class="btn btn-primary btn-block btn-lg mt-2" onclick="submitPrint()">
+        🖨️ Submit Print Job
+      </button>
+    </div>
+
+    <!-- SERVICE: DATA BUNDLES -->
+    <div id="svc_data" class="service-section hidden">
+      <h2 class="mb-2">📶 Data Bundles</h2>
+      <p class="text-muted mb-2">Buy Safaricom, Airtel, or Telkom data bundles via M-Pesa.</p>
+
+      <div class="form-group">
+        <label class="form-label">Network</label>
+        <select class="form-input" id="dataNetwork">
+          <option value="safaricom">Safaricom</option>
+          <option value="airtel">Airtel</option>
+          <option value="telkom">Telkom</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Phone Number</label>
+        <input type="tel" class="form-input" id="dataPhone" placeholder="0712345678">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Bundle</label>
+        <select class="form-input" id="dataBundle">
+          <option value="50">100MB — KES 50</option>
+          <option value="100">250MB — KES 100</option>
+          <option value="250">1GB — KES 250</option>
+          <option value="500">2GB — KES 500</option>
+          <option value="1000">5GB — KES 1,000</option>
+        </select>
+      </div>
+
+      <button class="btn btn-accent btn-block btn-lg mt-2" onclick="submitDataBundle()">
+        📶 Buy Bundle via M-Pesa
+      </button>
+    </div>
+
+    <!-- SERVICE: TYPING / FORMS -->
+    <div id="svc_typing" class="service-section hidden">
+      <h2 class="mb-2">⌨️ Typing & Form Filling</h2>
+      <p class="text-muted mb-2">KES 30 — We type documents, fill forms, or format your work.</p>
+
+      <div class="form-group">
+        <label class="form-label">What do you need?</label>
+        <textarea class="form-input" id="typingRequest" placeholder="Describe what you need typed or filled..."></textarea>
+      </div>
+
+      <div class="input-area">
+        <button class="voice-btn" id="voiceBtnTyping" onmousedown="startVoice('typingRequest')" onmouseup="stopVoice()" ontouchstart="startVoice('typingRequest')" ontouchend="stopVoice()">
+          🎤
+        </button>
+        <p class="voice-hint">Hold to speak your request</p>
+      </div>
+
+      <button class="btn btn-primary btn-block btn-lg mt-2" onclick="submitTyping()">
+        ⌨️ Submit Request
+      </button>
+    </div>
+
+    <!-- SERVICE: HELP -->
+    <div id="svc_help" class="service-section hidden">
+      <h2 class="mb-2">❓ Need Help?</h2>
+      <div class="card mb-2">
+        <h3 class="mb-1">How to use this kiosk:</h3>
+        <ol style="padding-left:20px; line-height:2;">
+          <li>Choose a service from the main menu</li>
+          <li>Speak or type your information</li>
+          <li>Pay with M-Pesa when prompted</li>
+          <li>Collect your printed document</li>
+        </ol>
+      </div>
+      <div class="card mb-2">
+        <h3 class="mb-1">💬 Prefer WhatsApp?</h3>
+        <p>Send a message to <strong>+254 XXX XXX XXX</strong> to use our AI assistant from your phone!</p>
+      </div>
+      <div class="card">
+        <h3 class="mb-1">📞 Need a person?</h3>
+        <p>Ask the staff at the counter. They're here to help!</p>
+      </div>
+      <button class="btn btn-primary btn-block mt-2" onclick="window.location.href='index.html'">🏠 Back to Home</button>
+    </div>
+
+    <!-- PROCESSING OVERLAY -->
+    <div id="processingOverlay" class="loading-overlay hidden">
+      <div class="spinner"></div>
+      <p class="loading-text" id="processingText">Processing your request...</p>
+      <p class="text-sm text-muted">This may take a moment</p>
+    </div>
+
+  </div>
+
+  <!-- Bottom Action Bar -->
+  <div class="bottom-bar" id="bottomBar">
+    <button class="btn btn-ghost btn-sm" onclick="window.location.href='index.html'">🏠 Home</button>
+    <span class="status status-ready" id="serviceStatus"><span class="status-dot"></span> Ready</span>
+    <button class="btn btn-primary btn-sm" id="actionBtn" onclick="handleAction()" style="display:none">Continue →</button>
+  </div>
+
+  <div id="toastContainer" class="toast-container"></div>
+
+  <script src="app.js"></script>
+  <script>
+    // === SERVICE PAGE LOGIC ===
+    const params = new URLSearchParams(window.location.search);
+    const service = params.get('service') || 'cv';
+    const currentLang = params.get('lang') || 'en';
+
+    // Service titles
+    const titles = {
+      cv: '📄 CV Writing', gov: '🏛️ Government Services', translate: '🌍 Translation',
+      print: '🖨️ Printing', data: '📶 Data Bundles', typing: '⌨️ Typing', help: '❓ Help'
+    };
+    document.getElementById('pageTitle').textContent = titles[service] || 'Service';
+
+    // Show the right section
+    document.querySelectorAll('.service-section').forEach(el => el.classList.add('hidden'));
+    const section = document.getElementById('svc_' + service);
+    if (section) section.classList.remove('hidden');
+
+    // === VOICE RECORDING ===
+    let mediaRecorder = null;
+    let audioChunks = [];
+    let isRecording = false;
+    let targetInputId = null;
+
+    async function startVoice(inputId) {
+      targetInputId = inputId || null;
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+        audioChunks = [];
+        mediaRecorder.ondataavailable = e => { if (e.data.size > 0) audioChunks.push(e.data); };
+        mediaRecorder.onstop = () => {
+          stream.getTracks().forEach(t => t.stop());
+          sendAudioForTranscription();
+        };
+        mediaRecorder.start();
+        isRecording = true;
+        document.querySelectorAll('.voice-btn').forEach(b => b.classList.add('recording'));
+        updateServiceStatus('recording', 'Recording...');
+      } catch (err) {
+        showToast('Microphone access denied. Please type instead.', 'error');
+      }
+    }
+
+    function stopVoice() {
+      if (mediaRecorder && isRecording) {
+        mediaRecorder.stop();
+        isRecording = false;
+        document.querySelectorAll('.voice-btn').forEach(b => b.classList.remove('recording'));
+        updateServiceStatus('processing', 'Transcribing...');
+      }
+    }
+
+    async function sendAudioForTranscription() {
+      const blob = new Blob(audioChunks, { type: 'audio/webm' });
+      const formData = new FormData();
+      formData.append('audio', blob, 'recording.webm');
+      formData.append('lang', currentLang);
+
+      try {
+        const res = await fetch('/api/transcribe', { method: 'POST', body: formData });
+        const data = await res.json();
+        if (data.text) {
+          if (targetInputId) {
+            const el = document.getElementById(targetInputId);
+            if (el.tagName === 'TEXTAREA' || el.tagName === 'INPUT') {
+              el.value += (el.value ? ' ' : '') + data.text;
+            } else {
+              el.textContent = data.text;
+            }
+          } else {
+            document.getElementById('transcript').textContent = data.text;
+          }
+          updateServiceStatus('ready', 'Transcribed');
+        }
+      } catch (err) {
+        showToast('Transcription failed. Try typing instead.', 'error');
+        updateServiceStatus('error', 'Transcription failed');
+      }
+    }
+
+    // === CV SERVICE ===
+    async function submitCV() {
+      const payload = {
+        name: document.getElementById('cv_name').value,
+        phone: document.getElementById('cv_phone').value,
+        education: document.getElementById('cv_education').value,
+        experience: document.getElementById('cv_experience').value,
+        skills: document.getElementById('cv_skills').value,
+        voice_text: document.getElementById('transcript').textContent,
+        lang: currentLang
+      };
+
+      if (!payload.name && !payload.voice_text) {
+        showToast('Please enter your name or speak your details.', 'warning');
+        return;
+      }
+
+      showProcessing('Generating your CV with AI...');
+      try {
+        const res = await fetch('/api/cv/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        hideProcessing();
+        if (data.cv) {
+          document.getElementById('cvText').textContent = data.cv;
+          document.getElementById('cvInputSection').classList.add('hidden');
+          document.getElementById('cvResult').classList.remove('hidden');
+          setStep(2);
+          updateServiceStatus('ready', 'CV Ready');
+        } else {
+          showToast(data.error || 'Failed to generate CV', 'error');
+        }
+      } catch (err) {
+        hideProcessing();
+        showToast('Network error. Please try again.', 'error');
+      }
+    }
+
+    function printCV() {
+      goToPayment('cv');
+    }
+
+    // === GOV SERVICE ===
+    const govFieldDefs = {
+      kra: [
+        { id: 'kra_name', label: 'Full Name', type: 'text', placeholder: 'As on ID' },
+        { id: 'kra_id', label: 'National ID Number', type: 'text', placeholder: '12345678' },
+        { id: 'kra_dob', label: 'Date of Birth', type: 'date' },
+        { id: 'kra_email', label: 'Email (optional)', type: 'email', placeholder: 'email@example.com' }
+      ],
+      ecitizen: [
+        { id: 'ec_name', label: 'Full Name', type: 'text' },
+        { id: 'ec_id', label: 'National ID', type: 'text' },
+        { id: 'ec_service', label: 'eCitizen Service', type: 'select', options: ['Passport', 'Driving License', 'National ID', 'Business Registration', 'Birth Certificate'] }
+      ],
+      nhif: [
+        { id: 'nhif_name', label: 'Full Name', type: 'text' },
+        { id: 'nhif_id', label: 'National ID', type: 'text' },
+        { id: 'nhif_phone', label: 'Phone Number', type: 'tel' },
+        { id: 'nhif_employer', label: 'Employer (if employed)', type: 'text' }
+      ],
+      nssf: [
+        { id: 'nssf_name', label: 'Full Name', type: 'text' },
+        { id: 'nssf_id', label: 'National ID', type: 'text' },
+        { id: 'nssf_phone', label: 'Phone Number', type: 'tel' },
+        { id: 'nssf_employer', label: 'Employer Name', type: 'text' }
+      ],
+      goodconduct: [
+        { id: 'gc_name', label: 'Full Name', type: 'text' },
+        { id: 'gc_id', label: 'National ID', type: 'text' },
+        { id: 'gc_dob', label: 'Date of Birth', type: 'date' },
+        { id: 'gc_pob', label: 'Place of Birth', type: 'text' }
+      ],
+      birth: [
+        { id: 'bc_child', label: "Child's Full Name", type: 'text' },
+        { id: 'bc_dob', label: 'Date of Birth', type: 'date' },
+        { id: 'bc_pob', label: 'Place of Birth', type: 'text' },
+        { id: 'bc_father', label: "Father's Name", type: 'text' },
+        { id: 'bc_mother', label: "Mother's Name", type: 'text' }
+      ]
+    };
+    const govServiceNames = {
+      kra: 'KRA PIN Registration', ecitizen: 'eCitizen Services', nhif: 'NHIF Registration',
+      nssf: 'NSSF Registration', goodconduct: 'Certificate of Good Conduct', birth: 'Birth Certificate'
+    };
+    let selectedGov = null;
+
+    function selectGovService(type) {
+      selectedGov = type;
+      document.getElementById('govSelectSection').classList.add('hidden');
+      document.getElementById('govFormSection').classList.remove('hidden');
+      document.getElementById('govServiceName').textContent = govServiceNames[type] || type;
+
+      const fields = govFieldDefs[type] || [];
+      const container = document.getElementById('govFields');
+      container.innerHTML = fields.map(f => {
+        if (f.type === 'select') {
+          return `<div class="gov-field-group"><label class="form-label">${f.label}</label>
+            <select class="form-input" id="${f.id}">${f.options.map(o => `<option>${o}</option>`).join('')}</select></div>`;
+        }
+        return `<div class="gov-field-group"><label class="form-label">${f.label}</label>
+          <input type="${f.type}" class="form-input" id="${f.id}" placeholder="${f.placeholder || ''}"></div>`;
+      }).join('');
+    }
+
+    function backToGovSelect() {
+      document.getElementById('govSelectSection').classList.remove('hidden');
+      document.getElementById('govFormSection').classList.add('hidden');
+      selectedGov = null;
+    }
+
+    async function submitGov() {
+      const fields = govFieldDefs[selectedGov] || [];
+      const payload = { service: selectedGov, fields: {} };
+      fields.forEach(f => {
+        const el = document.getElementById(f.id);
+        payload.fields[f.id] = el ? el.value : '';
+      });
+
+      showProcessing('Processing your application...');
+      try {
+        const res = await fetch('/api/gov/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        hideProcessing();
+        if (data.result) {
+          document.getElementById('govText').textContent = data.result;
+          document.getElementById('govFormSection').classList.add('hidden');
+          document.getElementById('govResult').classList.remove('hidden');
+          setStep(2);
+          updateServiceStatus('ready', 'Application Ready');
+        } else {
+          showToast(data.error || 'Submission failed', 'error');
+        }
+      } catch (err) {
+        hideProcessing();
+        showToast('Network error. Please try again.', 'error');
+      }
+    }
+
+    function printGov() { goToPayment('gov'); }
+
+    // === TRANSLATION ===
+    async function submitTranslation() {
+      const text = document.getElementById('translateInput').value;
+      if (!text) { showToast('Please enter or speak text to translate.', 'warning'); return; }
+
+      showProcessing('Translating...');
+      try {
+        const res = await fetch('/api/translate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            text,
+            from: document.getElementById('translateFrom').value,
+            to: document.getElementById('translateTo').value
+          })
+        });
+        const data = await res.json();
+        hideProcessing();
+        if (data.translation) {
+          document.getElementById('translateText').textContent = data.translation;
+          document.getElementById('translateResult').classList.remove('hidden');
+          setStep(2);
+        } else {
+          showToast(data.error || 'Translation failed', 'error');
+        }
+      } catch (err) {
+        hideProcessing();
+        showToast('Network error.', 'error');
+      }
+    }
+
+    function printTranslation() { goToPayment('translate'); }
+
+    // === PRINT SERVICE ===
+    function updatePrintCost() {
+      const pages = parseInt(document.getElementById('printPages').value) || 1;
+      const isColor = document.getElementById('printColor').value === 'color';
+      const perPage = isColor ? 20 : 10;
+      document.getElementById('printCost').textContent = `KES ${pages * perPage}`;
+    }
+    document.getElementById('printPages')?.addEventListener('input', updatePrintCost);
+    document.getElementById('printColor')?.addEventListener('change', updatePrintCost);
+
+    async function submitPrint() {
+      const pages = parseInt(document.getElementById('printPages').value) || 1;
+      const isColor = document.getElementById('printColor').value === 'color';
+      const cost = pages * (isColor ? 20 : 10);
+
+      goToPayment('print', cost);
+    }
+
+    // === DATA BUNDLES ===
+    async function submitDataBundle() {
+      const phone = document.getElementById('dataPhone').value;
+      const amount = document.getElementById('dataBundle').value;
+      if (!phone) { showToast('Enter your phone number.', 'warning'); return; }
+      goToPayment('data', parseInt(amount));
+    }
+
+    // === TYPING SERVICE ===
+    async function submitTyping() {
+      const req = document.getElementById('typingRequest').value;
+      if (!req) { showToast('Please describe what you need.', 'warning'); return; }
+      showProcessing('Submitting your request...');
+      try {
+        const res = await fetch('/api/typing/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ request: req, lang: currentLang })
+        });
+        const data = await res.json();
+        hideProcessing();
+        if (data.id) {
+          showToast('Request submitted! Staff will process it shortly.', 'success');
+          setStep(2);
+          goToPayment('typing', 30);
+        }
+      } catch (err) {
+        hideProcessing();
+        showToast('Network error.', 'error');
+      }
+    }
+
+    // === NAVIGATION & HELPERS ===
+    function goToPayment(serviceType, amount) {
+      const params = new URLSearchParams({ service: serviceType, lang: currentLang });
+      if (amount) params.set('amount', amount);
+      window.location.href = `payment.html?${params.toString()}`;
+    }
+
+    function setStep(n) {
+      for (let i = 1; i <= 4; i++) {
+        const step = document.getElementById('step' + i);
+        const line = document.getElementById('line' + (i - 1));
+        step.classList.remove('active', 'done');
+        if (i < n) step.classList.add('done');
+        else if (i === n) step.classList.add('active');
+        if (line) line.classList.toggle('done', i < n);
+      }
+    }
+
+    function showProcessing(text) {
+      document.getElementById('processingText').textContent = text || 'Processing...';
+      document.getElementById('processingOverlay').classList.remove('hidden');
+    }
+    function hideProcessing() {
+      document.getElementById('processingOverlay').classList.add('hidden');
+    }
+
+    function updateServiceStatus(type, text) {
+      const el = document.getElementById('serviceStatus');
+      el.className = 'status status-' + type;
+      el.innerHTML = '<span class="status-dot"></span> ' + text;
+    }
+
+    function handleAction() { /* placeholder for dynamic bottom bar action */ }
+
+    // Offline detection
+    function updateOnlineStatus() {
+      const banner = document.getElementById('offlineBanner');
+      const conn = document.getElementById('connStatus');
+      if (!navigator.onLine) {
+        banner.classList.add('visible');
+        conn.className = 'status status-error';
+        conn.innerHTML = '<span class="status-dot"></span> Offline';
+      } else {
+        banner.classList.remove('visible');
+        conn.className = 'status status-ready';
+        conn.innerHTML = '<span class="status-dot"></span> Online';
+      }
+    }
+    window.addEventListener('online', updateOnlineStatus);
+    window.addEventListener('offline', updateOnlineStatus);
+    updateOnlineStatus();
+
+    // Prevent zoom/scroll
+    document.addEventListener('contextmenu', e => e.preventDefault());
+  </script>
+</body>
+</html>

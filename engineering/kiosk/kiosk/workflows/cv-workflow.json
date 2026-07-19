@@ -1,0 +1,169 @@
+{
+  "name": "Aego — CV Writing Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "cv-request",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "trigger-cv",
+      "name": "CV Request Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "const body = items[0].json.body || items[0].json;\nconst source = body.source || 'kiosk';\nconst sessionId = body.session_id || body.sessionId || 'unknown';\n\n// Extract CV fields from request\nconst cvData = {\n  name: body.name || '',\n  phone: body.phone || '',\n  education: body.education || '',\n  experience: body.experience || '',\n  skills: body.skills || '',\n  voice_text: body.voice_text || '',\n  lang: body.lang || 'en',\n  source: source,\n  session_id: sessionId,\n  timestamp: new Date().toISOString()\n};\n\n// If voice text provided but no structured fields, parse voice input\nif (cvData.voice_text && !cvData.name) {\n  cvData.needs_parsing = true;\n}\n\nreturn [{ json: cvData }];"
+      },
+      "id": "parse-cv",
+      "name": "Parse CV Data",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [470, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{$json.needs_parsing}}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "check-parsing",
+      "name": "Needs Parsing?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [690, 300]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-mini",
+        "messages": {
+          "values": [
+            {
+              "content": "You are a CV assistant for Aego Cyber Cafe in Nyatike, Kenya. Parse the following voice/text input into structured CV data. Return JSON with fields: name, phone, education, experience, skills. Input language: {{$json.lang}}\n\nInput: {{$json.voice_text}}"
+            }
+          ]
+        },
+        "options": {
+          "temperature": 0.3,
+          "response_format": { "type": "json_object" }
+        }
+      },
+      "id": "ai-parse-voice",
+      "name": "AI Parse Voice Input",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1,
+      "position": [910, 200]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-mini",
+        "messages": {
+          "values": [
+            {
+              "content": "You are a professional CV writer for Aego Cyber Cafe in Nyatike, Migori County, Kenya. Create a clean, professional CV in plain text format suitable for printing on A4 paper.\n\nCustomer Details:\n- Name: {{$json.name}}\n- Phone: {{$json.phone}}\n- Education: {{$json.education}}\n- Experience: {{$json.experience}}\n- Skills: {{$json.skills}}\n\nRequirements:\n1. Use clear section headings\n2. Keep it to 1 page\n3. Use simple formatting (no special characters that might not print)\n4. Include a professional objective statement\n5. Format for Kenyan job market\n6. Language: {{$json.lang === 'sw' ? 'Swahili' : $json.lang === 'lu' ? 'Dholuo' : 'English'}}\n\nReturn the CV as plain text."
+            }
+          ]
+        },
+        "options": {
+          "temperature": 0.5
+        }
+      },
+      "id": "ai-generate-cv",
+      "name": "AI Generate CV",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1,
+      "position": [1130, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "const cvContent = items[0].json.choices?.[0]?.message?.content || items[0].json.text || '';\nconst requestData = $('Parse CV Data').first().json;\n\nreturn [{\n  json: {\n    cv_content: cvContent,\n    customer_name: requestData.name,\n    phone: requestData.phone,\n    service_type: 'cv',\n    amount: 100,\n    status: 'pending_approval',\n    session_id: requestData.session_id,\n    source: requestData.source,\n    created_at: new Date().toISOString()\n  }\n}];"
+      },
+      "id": "prepare-cv-result",
+      "name": "Prepare CV Result",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [1350, 300]
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "table": "requests",
+        "columns": "customer_name, phone, service_type, amount, status, details, session_id, source, created_at",
+        "additionalFields": {}
+      },
+      "id": "save-to-db",
+      "name": "Save to Database",
+      "type": "n8n-nodes-base.sqlite",
+      "typeVersion": 1,
+      "position": [1570, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "const dbResult = items[0].json;\nconst cvData = $('Prepare CV Result').first().json;\n\nreturn [{\n  json: {\n    ...cvData,\n    id: dbResult.id || dbResult.lastID,\n    action: 'staff_approval_required',\n    message: `New CV request from ${cvData.customer_name} - needs approval`,\n    notification_type: 'staff'\n  }\n}];"
+      },
+      "id": "notify-staff",
+      "name": "Prepare Staff Notification",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [1790, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.OPENCLAW_GATEWAY_URL}}/api/notify",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            { "name": "channel", "value": "staff" },
+            { "name": "message", "value": "={{$json.message}}" },
+            { "name": "data", "value": "={{JSON.stringify($json)}}" }
+          ]
+        }
+      },
+      "id": "send-staff-notification",
+      "name": "Notify Staff",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [2010, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ success: true, message: 'CV request submitted. Staff will review shortly.', id: $('Prepare CV Result').first().json.id }) }}"
+      },
+      "id": "respond-cv",
+      "name": "Respond to Client",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [2230, 300]
+    }
+  ],
+  "connections": {
+    "CV Request Trigger": { "main": [[{ "node": "Parse CV Data", "type": "main", "index": 0 }]] },
+    "Parse CV Data": { "main": [[{ "node": "Needs Parsing?", "type": "main", "index": 0 }]] },
+    "Needs Parsing?": {
+      "main": [
+        [{ "node": "AI Parse Voice Input", "type": "main", "index": 0 }],
+        [{ "node": "AI Generate CV", "type": "main", "index": 0 }]
+      ]
+    },
+    "AI Parse Voice Input": { "main": [[{ "node": "AI Generate CV", "type": "main", "index": 0 }]] },
+    "AI Generate CV": { "main": [[{ "node": "Prepare CV Result", "type": "main", "index": 0 }]] },
+    "Prepare CV Result": { "main": [[{ "node": "Save to Database", "type": "main", "index": 0 }]] },
+    "Save to Database": { "main": [[{ "node": "Prepare Staff Notification", "type": "main", "index": 0 }]] },
+    "Prepare Staff Notification": { "main": [[{ "node": "Notify Staff", "type": "main", "index": 0 }]] },
+    "Notify Staff": { "main": [[{ "node": "Respond to Client", "type": "main", "index": 0 }]] }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": [{ "name": "aego" }, { "name": "cv" }]
+}
